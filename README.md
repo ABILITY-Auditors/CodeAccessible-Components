@@ -28,4 +28,10 @@ Run this command in your CLI or Terminal: ```git clone <repo_url>```
 
   Then, using the same HTTPS link we used to clone the repo, add the upstream using this command: 
   
-    ```git remote add upstream repo_https_link```
+  ```git remote add upstream repo_https_link```
+
+  Run ```git remote -v ``` again and you should see two (2) upstream links added to the list. 
+
+## Step 4: Fetch from Upstream
+  To get the update from the original repo, which we will refer to from now on as upstream main, run this command on your CLI or Terminal: 
+    ```git fetch upstream ```
