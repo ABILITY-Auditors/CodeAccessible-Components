@@ -3,19 +3,18 @@
     rovingMain();
 
     function rovingMain() {
-        // components that open a menu have been given the attribute 'data-opener'
-        let menuControllers = document.querySelectorAll('[data-opener]');
+        // components that open a menu have been given the attribute 'data-controller'
+        let menuControllers = document.querySelectorAll('[data-controller]');
         for (let menuController of menuControllers) {
             let menu = getMenuFromController(menuController);
             if (menu.dataset.type !== 'roving') continue;
             initMenu(menu);
-            // add event listeners
             menu.addEventListener('keydown', rovingMoveFocus);
             menu.addEventListener('keydown', closeMenu);
             menu.addEventListener('keydown', keyboardActivation);
             menu.addEventListener('click', activateFunction);
-            menuController.addEventListener('click', (e) => toggleMenu(menu));
-            menuController.addEventListener('keydown', controllerKeyboardActivation);
+            menuController.addEventListener('click', controllerActivation);
+            menuController.addEventListener('keydown', controllerActivation);
         }
     }
 
@@ -28,12 +27,12 @@
      */
     function initMenu(menu) {
         // only get menutitems part of the scope
-        let menuitems = [...menu.querySelectorAll(':is([role="menuitem"], [data-opener])')];
+        let menuitems = [...menu.querySelectorAll(':is([role="menuitem"], [data-controller])')];
         // iterate over all menuitems and add dataset.next and dataset.previous
         for (let i = 0; i < menuitems.length; i++) {
             let menuitem = menuitems[i];
             // if this opens a submenu
-            if ('opener' in menuitem.dataset) {
+            if ('controller' in menuitem.dataset) {
                 menuitem.setAttribute('role', 'menuitem');
             }
             // handle first/last
@@ -50,8 +49,9 @@
      * @param {KeyboardEvent} e event
      */
     function rovingMoveFocus(e) {
-        // if not moving through the menu, return
-        if (!['ArrowUp', 'ArrowDown', 'ArrowRight'].includes(e.key)) return;
+        // if not moving through the menu, return as we only handle navigation
+        const acceptableKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight'];
+        if (!acceptableKeys.includes(e.key)) return;
         let menuitem = e.target;
         let nextMenuitem;
         switch (e.key) {
@@ -94,7 +94,7 @@
      */
     function activateFunction(e) {
         let menuitem = e.target;
-        if ('opener' in menuitem.dataset) return;
+        if ('controller' in menuitem.dataset) return;
         if (isMenuitem(menuitem)) {
             alert(`activated the menuitem: ${menuitem.textContent}`);
         }
@@ -109,7 +109,7 @@
     function toggleMenu(menu) {
         // close submenus
         let openedControllers = menu.querySelectorAll(
-            '[data-opener][aria-expanded="true"]'
+            '[data-controller][aria-expanded="true"]'
         );
         for (let controller of openedControllers) {
             let submenu = getMenuFromController(controller);
@@ -132,12 +132,12 @@
     }
     
     /**
-     * Handles keyboard activation of menu controllers.
+     * Handles activation of menu controllers.
      * @param {Event} e 
      */
-    function controllerKeyboardActivation(e) {
-        let acceptedKeys = ["ArrowRight", "Enter", " "];
-        if (!acceptedKeys.includes(e.key)) return;
+    function controllerActivation(e) {
+        const acceptedKeys = ["ArrowRight", "Enter", " "];
+        if (e.type === 'keydown' && !acceptedKeys.includes(e.key)) return;
         let controller = e.currentTarget;
         let nextMenu = document.getElementById(controller.getAttribute('aria-controls'));
         if (nextMenu) {
@@ -153,7 +153,6 @@
      * viewport size is changed to ensure that WACG SC 1.4.10 Reflow is satisfied.
      * @param {HTMLElement} controller the component that opens a menu, 
      *                                 "controls" the presence of the menu
-     * @returns null
      */
     function positionMenu(menu) {
         let controller = getControllerFromMenu(menu);
