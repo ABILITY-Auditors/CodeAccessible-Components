@@ -8,20 +8,26 @@
  </head>
  <body>
   <h1>Accessible Table with Sort</h1>
-  <table>
+  <table id="container">
    <thead>
     <tr>
      <th>
       Name
-      <button><span></span></button>
+      <button class="sortBtn" onclick="sortTable(0)">
+       <span class="order bi bi-chevron-double-up"></span>
+      </button>
      </th>
      <th>
       Age
-      <button><span></span></button>
+      <button class="sortBtn" onclick="sortTable(1)">
+       <span class="order bi bi-chevron-double-up"></span>
+      </button>
      </th>
      <th>
       Country
-      <button><span></span></button>
+      <button class="sortBtn" onclick="sortTable(2)">
+       <span class="order bi bi-chevron-double-up"></span>
+      </button>
      </th>
     </tr>
    </thead>

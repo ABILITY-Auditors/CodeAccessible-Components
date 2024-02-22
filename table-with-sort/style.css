@@ -8,4 +8,14 @@ th,
 td {
  border: 1px solid black;
  text-align: left;
+ padding: 8px;
+}
+th {
+ cursor: pointer;
+}
+.ascending::after {
+ content: "";
+}
+.descending::after {
+ content: "";
 }
