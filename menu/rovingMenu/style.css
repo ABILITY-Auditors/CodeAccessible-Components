@@ -56,6 +56,12 @@ ul[role="menu"] [data-opener] {
     position: relative;
 }
 
+/* We remove the default focus indicator as we indicate focus 
+    by setting the bg color to black and the text color to white. */
+[role="menuitem"] {
+    outline: none;
+}
+
 [role="menu"] [role="menuitem"]:focus:not(:hover) {
     background-color: #222;
     color: white;

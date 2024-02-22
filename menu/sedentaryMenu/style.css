@@ -13,7 +13,7 @@ ul[role="menu"] {
     outline: none;
 }
 
-ul[role="menu"] [data-opener] {
+ul[role="menu"] [data-controller] {
     display: block;
     border: none;
     background: transparent;
@@ -41,17 +41,17 @@ ul[role="menu"] ul[role="menu"] {
     top: 0;
 }
 
-ul[role="menu"] [data-opener]::after {
+ul[role="menu"] [data-controller]::after {
     content: "...->";
     font-family: 'Courier New', Courier, monospace;
 }
 
-ul[role="menu"] [data-opener][aria-expanded="true"]::after {
+ul[role="menu"] [data-controller][aria-expanded="true"]::after {
     content: "....v";
 }
 
 li[role="menuitem"],
-ul[role="menu"] [data-opener] {
+ul[role="menu"] [data-controller] {
     cursor: pointer;
     padding: 0.25rem;
     text-align: left;
@@ -61,7 +61,7 @@ ul[role="menu"] [data-opener] {
 }
 
 li[role="menuitem"]:hover,
-ul[role="menu"] [data-opener]:hover {
+ul[role="menu"] [data-controller]:hover {
     background-color: rgb(199, 200, 247);
     color: black;
 }

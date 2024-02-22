@@ -1,83 +1,13 @@
+// Encapsulation
 (() => {
-    const maxWidth = 500;
-
     rovingMain();
-
-    /**
-     * Opens or closes a menu.
-     * @param {HTMLElement} menu [role="menu"] element
-     */
-    function toggleMenu(menu) {
-        // close submenus
-        let openedControllers = menu.querySelectorAll(
-            '[data-opener][aria-expanded="true"]'
-        );
-        for (let controller of openedControllers) {
-            let submenu = getMenuFromController(controller);
-            toggleMenu(submenu);
-        }
-        // get controller of current menu
-        let controller = getControllerFromMenu(menu);
-        // toggle visibility
-        menu.hidden = !menu.hidden;
-        // set controller's state
-        controller.setAttribute('aria-expanded', !menu.hidden);
-        if (menu.hidden) {
-            // set focus on menu dismissal
-            controller.focus();
-        }
-        else {
-            openRovingMenu(menu);
-            positionMenu(menu);
-        }
-    }
-    
-
-    /**
-     * Reposition a menu. Should be called after opening the menu or when the 
-     * viewport size is changed to ensure that WACG SC 1.4.10 Reflow is satisfied.
-     * @param {HTMLElement} controller the component that opens a menu, 
-     *                                 "controls" the presence of the menu
-     * @returns null
-     */
-    function positionMenu(menu) {
-        let controller = getControllerFromMenu(menu);
-        let ancestor = controller.closest('[data-menu-component]');
-        if (!ancestor) {
-            console.warn("can't position submenu, ancestor not found!");
-            return;
-        }
-        // reset the styling
-        menu.style.removeProperty('width');
-        menu.style.removeProperty('left');
-        menu.style.removeProperty('white-space');
-        // get menu dimensions
-        let menuRect = menu.getBoundingClientRect();
-        // set max-width
-        if (menuRect.width > maxWidth) {
-            menu.style.width = maxWidth + 'px';
-            menu.style.whiteSpace = 'normal';
-        }
-        let ancestorRect = ancestor.getBoundingClientRect();
-        let controllerRect = controller.getBoundingClientRect();
-
-        // this positions the new menu directly below the controlling menuitem/button
-        let zeroY = controllerRect.y - ancestorRect.y + controllerRect.height;
-        menu.style.top = zeroY + 'px';
-        // set the width of submenus equal to parent
-        if (menuRect.width < controllerRect.width) {
-            let borderWidth = 
-                getPropertyAsNumber(menu, 'border-left-width') 
-                + getPropertyAsNumber(menu, 'border-right-width');
-            menu.style.width = controllerRect.width + borderWidth + 'px';
-        }
-    }
 
     function rovingMain() {
         // components that open a menu have been given the attribute 'data-opener'
         let menuControllers = document.querySelectorAll('[data-opener]');
         for (let menuController of menuControllers) {
             let menu = getMenuFromController(menuController);
+            if (menu.dataset.type !== 'roving') continue;
             initMenu(menu);
             // add event listeners
             menu.addEventListener('keydown', rovingMoveFocus);
@@ -89,17 +19,7 @@
         }
     }
 
-    function controllerKeyboardActivation(e) {
-        let acceptedKeys = ["ArrowRight", "Enter", " "];
-        if (!acceptedKeys.includes(e.key)) return;
-        let controller = e.currentTarget;
-        let nextMenu = document.getElementById(controller.getAttribute('aria-controls'));
-        if (nextMenu) {
-            toggleMenu(nextMenu);
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }
+    /* (non-simple) Functions called in main(), ordered by appearance */
 
     /**
      * Given a menu, for each menuitem this prepares that menuitem HTML Element's dataset
@@ -147,26 +67,6 @@
         e.preventDefault();
     }
 
-    
-
-    /**
-     * Opens a menu and sets focus appropriately.
-     * @param {HTMLElement[role="menu"]} menu the menu element
-     */
-    function openRovingMenu(menu) {
-        let currentMenuitem = menu.querySelector('[tabindex="0"]');
-        // if we want to reset focus to the first menu item each time it is opened
-        if ('resetFocus' in menu.dataset) {
-            currentMenuitem.tabIndex = -1;
-            let firstMenuitem = menu.querySelector('[role="menuitem"]');
-            firstMenuitem.tabIndex = 0;
-            firstMenuitem.focus();
-        }
-        else {
-            currentMenuitem.focus();
-        }
-    }
-
     /**
      * Handles keyboard closing of menus
      * @param {KeyboardEvent} e e.currentTarget
@@ -195,11 +95,110 @@
     function activateFunction(e) {
         let menuitem = e.target;
         if ('opener' in menuitem.dataset) return;
-        if (menuitem.hasAttribute('role') && menuitem.getAttribute('role') === 'menuitem') {
+        if (isMenuitem(menuitem)) {
             alert(`activated the menuitem: ${menuitem.textContent}`);
         }
         fullyCloseMenu(menuitem.closest('[role="menu"]'));
         e.preventDefault();
+    }
+
+    /**
+     * Opens or closes a menu.
+     * @param {HTMLElement} menu [role="menu"] element
+     */
+    function toggleMenu(menu) {
+        // close submenus
+        let openedControllers = menu.querySelectorAll(
+            '[data-opener][aria-expanded="true"]'
+        );
+        for (let controller of openedControllers) {
+            let submenu = getMenuFromController(controller);
+            toggleMenu(submenu);
+        }
+        // get controller of current menu
+        let controller = getControllerFromMenu(menu);
+        // toggle visibility
+        menu.hidden = !menu.hidden;
+        // set controller's state
+        controller.setAttribute('aria-expanded', !menu.hidden);
+        if (menu.hidden) {
+            // set focus on menu dismissal
+            controller.focus();
+        }
+        else {
+            openRovingMenu(menu);
+            positionMenu(menu);
+        }
+    }
+    
+    /**
+     * Handles keyboard activation of menu controllers.
+     * @param {Event} e 
+     */
+    function controllerKeyboardActivation(e) {
+        let acceptedKeys = ["ArrowRight", "Enter", " "];
+        if (!acceptedKeys.includes(e.key)) return;
+        let controller = e.currentTarget;
+        let nextMenu = document.getElementById(controller.getAttribute('aria-controls'));
+        if (nextMenu) {
+            toggleMenu(nextMenu);
+            e.preventDefault();
+        }
+    }
+
+    /* (non-simple) Functions not called directly in main() */
+
+    /**
+     * Reposition a menu. Should be called after opening the menu or when the 
+     * viewport size is changed to ensure that WACG SC 1.4.10 Reflow is satisfied.
+     * @param {HTMLElement} controller the component that opens a menu, 
+     *                                 "controls" the presence of the menu
+     * @returns null
+     */
+    function positionMenu(menu) {
+        let controller = getControllerFromMenu(menu);
+        let ancestor = controller.closest('[data-menu-component]');
+        if (!ancestor) {
+            console.warn("can't position submenu, ancestor not found!");
+            return;
+        }
+        // reset the styling
+        menu.style.removeProperty('width');
+        menu.style.removeProperty('left');
+        menu.style.removeProperty('white-space');
+        // get menu dimensions
+        let menuRect = menu.getBoundingClientRect();
+        let ancestorRect = ancestor.getBoundingClientRect();
+        let controllerRect = controller.getBoundingClientRect();
+
+        // this positions the new menu directly below the controlling menuitem/button
+        let zeroY = controllerRect.y - ancestorRect.y + controllerRect.height;
+        menu.style.top = zeroY + 'px';
+        // set the width of submenus equal to parent
+        if (menuRect.width < controllerRect.width) {
+            let borderWidth = 
+                getPropertyAsNumber(menu, 'border-left-width') 
+                + getPropertyAsNumber(menu, 'border-right-width');
+            menu.style.width = controllerRect.width + borderWidth + 'px';
+        }
+    }
+
+    /**
+     * Opens a menu and sets focus appropriately.
+     * @param {HTMLElement[role="menu"]} menu the menu element
+     */
+    function openRovingMenu(menu) {
+        let currentMenuitem = menu.querySelector('[tabindex="0"]');
+        // if we want to reset focus to the first menu item each time it is opened
+        if ('resetFocus' in menu.dataset) {
+            currentMenuitem.tabIndex = -1;
+            let firstMenuitem = menu.querySelector('[role="menuitem"]');
+            firstMenuitem.tabIndex = 0;
+            firstMenuitem.focus();
+        }
+        else {
+            currentMenuitem.focus();
+        }
     }
 
     /**
@@ -217,6 +216,8 @@
         }
     }
 
+    /* Simple Functions */
+
     /**
      * Gets the element that controls this menu.
      * @param {HTMLElement} menu [role="menu"] element
@@ -233,6 +234,15 @@
      */
     function getMenuFromController(controller) {
         return document.getElementById(controller.getAttribute('aria-controls'));
+    }
+
+    /**
+     * Checks if an element is a menuitem.
+     * @param {HTMLElement} element the html element to check
+     * @returns Boolean
+     */
+    function isMenuitem(element) {
+        return element.hasAttribute('role') && element.getAttribute('role') === 'menuitem';
     }
 
     /**

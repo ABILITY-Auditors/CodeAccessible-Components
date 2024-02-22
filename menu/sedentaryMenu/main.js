@@ -1,10 +1,9 @@
+// Encapsulation
 (() => {
-    const maxWidth = 500;
-
     sedentaryMain();
 
     function sedentaryMain() {
-        let menuControllers = document.querySelectorAll('[data-opener]');
+        let menuControllers = document.querySelectorAll('[data-controller]');
         for (let menuController of menuControllers) {
             let menu = getMenuFromController(menuController);
             if (menu.dataset.type !== 'sedentary') continue;
@@ -17,6 +16,124 @@
         }
     }
 
+    /* (non-simple) Functions called in main(), ordered by appearance */
+
+    /**
+     * Prepares the HTML dataset to include next/previous
+     * element.
+     * @param {HTMLElement} menu [role="menu"] element
+     */
+    function initMenu(menu) {
+        // only get menutitems part of the scope
+        // filter out any menuitems not part of the current menu
+        let menuitems = [...menu.querySelectorAll(':is([role="menuitem"], [data-controller])')];
+        // iterate over all menuitems and add dataset.next and dataset.previous
+        for (let i = 0; i < menuitems.length; i++) {
+            let menuitem = menuitems[i];
+            // if this opens a submenu
+            if ('controller' in menuitem.dataset) {
+                menuitem.setAttribute('role', 'menuitem');
+            }
+            // handle first/last
+            let nextIndex = i + 1 >= menuitems.length ? 0 : i + 1;
+            let prevIndex = i <= 0 ? menuitems.length - 1 : i - 1;
+            // set the next/previous dataset
+            menuitem.dataset.next = menuitems[nextIndex].id;
+            menuitem.dataset.previous = menuitems[prevIndex].id;
+        }
+    }
+
+    /**
+     * 
+     * @param {Event} e 
+     * @returns 
+     */
+    function sedentaryMoveFocus(e) {
+        // if not moving through the menu, return
+        let menu = e.currentTarget;
+        let menuitem = document.getElementById(menu.getAttribute('aria-activedescendant'));
+        if (!['ArrowUp', 'ArrowDown', 'ArrowRight'].includes(e.key)) return;
+        if (e.key === 'ArrowRight' && !menuitem.matches('[data-controller]')) return;
+
+        // get the next menu item to be focused
+        let nextMenuitem, nextMenu;
+        if (e.key === 'ArrowUp') {
+            nextMenuitem = document.getElementById(menuitem.dataset.previous);
+        }
+        else if (e.key === 'ArrowDown') {
+            nextMenuitem = document.getElementById(menuitem.dataset.next);
+        }
+        else {
+            // ArrowRight
+            // open the associated menu if it exists
+            nextMenu = document.getElementById(
+                menuitem.getAttribute('aria-controls')
+            );
+            toggleMenu(nextMenu);
+            nextMenuitem = document.getElementById(
+                nextMenu.getAttribute('aria-activedescendant')
+            );
+        }
+        nextMenu ||= menu;
+        // set focus
+        // note that "aria-activedescendant" effectively sets the focus for
+        // assistive technology, even though the browser's focus remains on the
+        // [role="menu"] element
+        setSedentaryFocus(nextMenu, nextMenuitem);
+        e.preventDefault();
+    }
+
+    /**
+     * Handles keyboard closing of menus
+     * @param {KeyboardEvent} e e.currentTarget
+     */
+    function closeMenu(e) {
+        if (e.key !== 'Escape' && e.key !== 'ArrowLeft') return;
+        toggleMenu(e.currentTarget);
+        e.preventDefault();
+    }
+
+    /**
+     * Handles keyboard activation of components
+     * @param {KeyboardEvent} e event
+     */
+    function keyboardActivation(e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        let menu = e.currentTarget;
+        let menuitem = document.getElementById(
+            menu.getAttribute('aria-activedescendant')
+        );
+        e.preventDefault();
+        activateFunction(menuitem);
+    }
+
+    /**
+     * Handles clicks.
+     * @param {Event} e click event
+     */
+    function pointerActivation(e) {
+        let menuitem = e.target;
+
+        // we handle menuitems that open submenus separately
+        if (!('controller' in menuitem.dataset)) activateFunction(menuitem);
+        e.preventDefault();
+    }
+
+    /**
+     * Handles users clicking on a menu controller.
+     * @param {Event} e event
+     */
+    function controllerActivation(e) {
+        let controller = e.currentTarget;
+        let nextMenu = document.getElementById(controller.getAttribute('aria-controls'));
+        if (nextMenu) {
+            toggleMenu(nextMenu);
+            e.preventDefault();
+        }
+    }
+
+    /* (non-simple) Functions not called directly in main() */
+
     /**
      * Opens or closes a menu.
      * @param {HTMLElement} menu [role="menu"] element
@@ -24,7 +141,7 @@
     function toggleMenu(menu) {
         // close submenus
         let openedControllers = menu.querySelectorAll(
-            '[data-opener][aria-expanded="true"]'
+            '[data-controller][aria-expanded="true"]'
         );
         for (let controller of openedControllers) {
             let submenu = getMenuFromController(controller);
@@ -85,7 +202,6 @@
         menuitem.classList.add('active');
     }
 
-
     /**
      * Reposition a menu. Should be called after opening the menu or when the 
      * viewport size is changed to ensure that WACG SC 1.4.10 Reflow is satisfied.
@@ -106,11 +222,6 @@
         menu.style.removeProperty('white-space');
         // get menu dimensions
         let menuRect = menu.getBoundingClientRect();
-        // set max-width
-        if (menuRect.width > maxWidth) {
-            menu.style.width = maxWidth + 'px';
-            menu.style.whiteSpace = 'normal';
-        }
         let ancestorRect = ancestor.getBoundingClientRect();
         let controllerRect = controller.getBoundingClientRect();
 
@@ -126,80 +237,13 @@
         }
     }
 
-    function controllerActivation(e) {
-        //let acceptedKeys = ["ArrowRight", "Enter", " "];
-        //if (e.type === 'keydown' && !acceptedKeys.includes(e.key)) return;
-        let controller = e.currentTarget;
-        let nextMenu = document.getElementById(controller.getAttribute('aria-controls'));
-        if (nextMenu) {
-            toggleMenu(nextMenu);
-            e.preventDefault();
-        }
-    }
-
-    /**
-     * Prepares the HTML dataset to include next/previous
-     * element.
-     * @param {HTMLElement} menu [role="menu"] element
-     */
-    function initMenu(menu) {
-        // only get menutitems part of the scope
-        // filter out any menuitems not part of the current menu
-        let menuitems = [...menu.querySelectorAll(':is([role="menuitem"], [data-opener])')];
-        // iterate over all menuitems and add dataset.next and dataset.previous
-        for (let i = 0; i < menuitems.length; i++) {
-            let menuitem = menuitems[i];
-            // if this opens a submenu
-            if ('opener' in menuitem.dataset) {
-                menuitem.setAttribute('role', 'menuitem');
-            }
-            // handle first/last
-            let nextIndex = i + 1 >= menuitems.length ? 0 : i + 1;
-            let prevIndex = i <= 0 ? menuitems.length - 1 : i - 1;
-            // set the next/previous dataset
-            menuitem.dataset.next = menuitems[nextIndex].id;
-            menuitem.dataset.previous = menuitems[prevIndex].id;
-        }
-    }
-
-    /**
-     * Handles keyboard closing of menus
-     * @param {KeyboardEvent} e e.currentTarget
-     */
-    function closeMenu(e) {
-        if (e.key !== 'Escape' && e.key !== 'ArrowLeft') return;
-        toggleMenu(e.currentTarget);
-        e.preventDefault();
-    }
-
-    /**
-     * Handles keyboard activation of components
-     * @param {KeyboardEvent} e event
-     */
-    function keyboardActivation(e) {
-        if (e.key !== 'Enter' && e.key !== ' ') return;
-        let menu = e.currentTarget;
-        let menuitem = document.getElementById(
-            menu.getAttribute('aria-activedescendant')
-        );
-        e.preventDefault();
-        activateFunction(menuitem);
-    }
-
-    function pointerActivation(e) {
-        let menuitem = e.target;
-
-        // we handle menuitems that open submenus separately
-        if (!('opener' in menuitem.dataset)) activateFunction(menuitem);
-        e.preventDefault();
-    }
-
     /**
      * Pretends to activate the function of the menuitem
      * @param {Event} e e.target
      */
     function activateFunction(menuitem) {
-        if ('opener' in menuitem.dataset) {
+        if ('controller' in menuitem.dataset) {
+            // clicking a menu controller toggles the associated menu
             menuitem.click();
             return;
         }
@@ -222,59 +266,24 @@
         }
     }
 
+    /* Simple Functions */
+
     /**
      * Gets the element that controls this menu
-     * @param {HTMLElement} menu [role="menu"] element
+     * @param {HTMLElement[role="menu"]} menu [role="menu"] element
      * @returns the element that controls the given menu
      */
     function getControllerFromMenu(menu) {
         return document.getElementById(menu.getAttribute('aria-labelledby'));
     }
 
+    /**
+     * Gets the [role="menu"] element that the controller controls.
+     * @param {HTMLElement} controller button or menuitem that controls the presence of a menu
+     * @returns HTMLElement[role="menu"]
+     */
     function getMenuFromController(controller) {
         return document.getElementById(controller.getAttribute('aria-controls'));
-    }
-
-
-
-    /**
-     * 
-     * @param {Event} e 
-     * @returns 
-     */
-    function sedentaryMoveFocus(e) {
-        // if not moving through the menu, return
-        let menu = e.currentTarget;
-        let menuitem = document.getElementById(menu.getAttribute('aria-activedescendant'));
-        if (!['ArrowUp', 'ArrowDown', 'ArrowRight'].includes(e.key)) return;
-        if (e.key === 'ArrowRight' && !menuitem.matches('[data-opener]')) return;
-
-        // get the next menu item to be focused
-        let nextMenuitem, nextMenu;
-        if (e.key === 'ArrowUp') {
-            nextMenuitem = document.getElementById(menuitem.dataset.previous);
-        }
-        else if (e.key === 'ArrowDown') {
-            nextMenuitem = document.getElementById(menuitem.dataset.next);
-        }
-        else {
-            // ArrowRight
-            // open the associated menu if it exists
-            nextMenu = document.getElementById(
-                menuitem.getAttribute('aria-controls')
-            );
-            toggleMenu(nextMenu);
-            nextMenuitem = document.getElementById(
-                nextMenu.getAttribute('aria-activedescendant')
-            );
-        }
-        nextMenu ||= menu;
-        // set focus
-        // note that "aria-activedescendant" effectively sets the focus for
-        // assistive technology, even though the browser's focus remains on the
-        // [role="menu"] element
-        setSedentaryFocus(nextMenu, nextMenuitem);
-        e.preventDefault();
     }
 
     /**
