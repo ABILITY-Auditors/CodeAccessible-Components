@@ -25,3 +25,7 @@ Run this command in your CLI or Terminal: ```git clone <repo_url>```
   To check the origin of your local repository, run this command in your CLI or Terminal: 
 
   ```git remote -v```
+
+  Then, using the same HTTPS link we used to clone the repo, add the upstream using this command: 
+  
+    ```git remote add upstream repo_https_link```
