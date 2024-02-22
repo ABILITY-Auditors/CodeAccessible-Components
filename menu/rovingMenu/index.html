@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Example</title>
+
+    <link rel="stylesheet" href="../css-libraries/breadcrumbs.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+    <main>
+        <div class="example">
+            <!-- 
+                AT = Assistive Technology
+
+                Roving vs Sedentary focus management:
+                - Roving focus management: 
+                    individual menuitems in a menu each receive focus. 
+                - Sedentary focus management: 
+                    focus remains on the element with role="menu". This element's 
+                    aria-activedescendant attribute indicates which menuitem in 
+                    this menu currently has focus. AT will be notified when this 
+                    attribute is changed and will, as a result, notify users of 
+                    the change in focus.
+
+                Relevant Attribtues:
+                    button#menu-opener-sedentary-focus:
+                    - (NECESSARY) aria-expanded: 
+                            ensures that the expanded state of this button 
+                            is programmatically determinable.
+                    - (OPTIONAL ) aria-haspopup: 
+                            allows AT to notify users that this component, 
+                            when activated, will open a component with a 
+                            ROLE of MENU. Experienced users may expect and 
+                            understand how to interact with this type of 
+                            component, specifically that keyboard navigation 
+                            is primarily with the arrow keys.
+                    - (OPTIONAL ) aria-controls:
+                            indicates to AT that this component controls the
+                            element with this id. 
+                    Note: 
+                        This button element is not considered part of the 
+                        composite menu widget. It merely controls the 
+                        presence of the composite menu widget.
+                    
+                    ul#menu-example-roving-focus:
+                    - (NECESSARY) role="menu":
+                            this ensures that this element has the proper role.
+                            Assistive technology may behave differently depending
+                            on the role of an element. With interactive widgets
+                            like a menu, AT will also notify users of the role
+                            so that they understand how to interact with it.
+                    - (OPTIONAL ) aria-labelledby:
+                            provides an accessible name to the menu.
+             -->
+
+            <!-- ROVING FOCUS MANAGEMENT EXAMPLE -->
+            <h2>Roving Focus Menu Example</h2>
+            <div data-menu-component="roving">
+                <button id="menu-opener-roving-focus" 
+                    aria-expanded="false"
+                    aria-haspopup="menu"
+                    aria-controls="menu-example-roving-focus"
+                    data-opener>
+                    Edit text properties
+                </button>
+                <ul id="menu-example-roving-focus" role="menu" 
+                    aria-labelledby="menu-opener-roving-focus" 
+                    data-type="roving"
+                    data-reset-focus
+                    hidden>
+                    <li id="b0" role="menuitem" tabindex="0">Increase opacity</li>
+                    <li id="b1" role="menuitem">Decrease opacity</li>
+                    <li id="b2" role="menuitem">Increase text size</li>
+                    <li id="b3" role="menuitem">Decrease text size</li>
+                    <li id="b4" role="menuitem" 
+                        aria-expanded="false" 
+                        aria-haspopup="menu"
+                        aria-controls="example-submenu" 
+                        data-opener>
+                        Text transformations
+                    </li>
+                    <li id="b5" role="menuitem">Copy text</li>
+                    <li id="b6" role="menuitem">Hide text</li>
+                </ul>
+                <!-- treats submenu -->
+                <ul id="example-submenu" role="menu" 
+                    aria-labelledby="b4"
+                    data-type="roving"
+                    hidden>
+                    <li id="d0" role="menuitem" tabindex="0">Skew text</li>
+                    <li id="d1" role="menuitem">Strikethrough text</li>
+                    <li id="d2" role="menuitem">Underline text</li>
+                    <li id="d3" role="menuitem" 
+                        aria-expanded="false" 
+                        aria-haspopup="menu"
+                        aria-controls="example-sub-submenu" 
+                        data-opener>
+                        Text effects
+                    </li>
+                </ul>
+                <!-- more treats submenu -->
+                <ul id="example-sub-submenu" role="menu"  
+                    aria-labelledby="d3"
+                    data-type="roving"
+                    hidden>
+                    <li id="e0" role="menuitem" tabindex="0">Add dropshadow</li>
+                    <li id="e1" role="menuitem">Add text outline</li>
+                    <li id="e2" role="menuitem">Remove all formatting</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -3,11 +3,6 @@ body {
     padding: 0;
 }
 
-.active {
-    background-color: rgb(85, 85, 185);
-    color: white;
-}
-
 ul[role="menu"] [data-opener] {
     display: block;
     border: none;
@@ -55,23 +50,19 @@ ul[role="menu"] [data-opener] {
     width: 100%;
 }
 
-li[role="menuitem"]:hover,
-ul[role="menu"] [data-opener]:hover {
-    background-color: rgb(199, 200, 247);
-    color: black;
-}
-
 [data-menu-component] {
     margin: 0;
     padding: 0;
     position: relative;
 }
 
-[role="menu"] [role="menuitem"].active {
+[role="menu"] [role="menuitem"]:focus:not(:hover) {
     background-color: #222;
-}
-[data-menu-component] [role="menuitem"]:focus {
-    outline: none;
-    background-color: #333;
     color: white;
+}
+
+li[role="menuitem"]:hover,
+ul[role="menu"] [data-opener]:hover {
+    background-color: rgb(199, 200, 247);
+    color: black;
 }

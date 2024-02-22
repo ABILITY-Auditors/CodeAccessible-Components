@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.active {
+    background-color: rgb(85, 85, 185);
+}
+
+/* we remove the default outline as the menuitems 
+   in focus are given their own custom focus indicator */
+ul[role="menu"] {
+    outline: none;
+}
+
+ul[role="menu"] [data-opener] {
+    display: block;
+    border: none;
+    background: transparent;
+}
+
+ul[role="menu"],
+ul[role="menu"] * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+}
+
+ul[role="menu"] {
+    position: absolute;
+    z-index: 1;
+
+    box-shadow: 0px 4px 5px -2px black;
+    border: max(1px, 0.15rem) solid black;
+    list-style: none;
+    white-space: nowrap;
+}
+
+ul[role="menu"] ul[role="menu"] {
+    top: 0;
+}
+
+ul[role="menu"] [data-opener]::after {
+    content: "...->";
+    font-family: 'Courier New', Courier, monospace;
+}
+
+ul[role="menu"] [data-opener][aria-expanded="true"]::after {
+    content: "....v";
+}
+
+li[role="menuitem"],
+ul[role="menu"] [data-opener] {
+    cursor: pointer;
+    padding: 0.25rem;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+}
+
+li[role="menuitem"]:hover,
+ul[role="menu"] [data-opener]:hover {
+    background-color: rgb(199, 200, 247);
+    color: black;
+}
+
+[data-menu-component] {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+[role="menu"]:focus [role="menuitem"].active:not(:hover) {
+    background-color: #222;
+    color: white;
+}
