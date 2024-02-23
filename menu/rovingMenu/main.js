@@ -15,7 +15,12 @@
             menu.addEventListener('click', activateFunction);
             menuController.addEventListener('click', controllerActivation);
             menuController.addEventListener('keydown', controllerActivation);
+            //menuController.addEventListener('focusin', closeControllerMenu);
         }
+        //let menuWidgets = document.querySelectorAll('[data-menu-component]');
+        //for(let menuWidget of menuWidgets) {
+        //    menuWidget.addEventListener('focusout', closeAllMenus);
+        //}
     }
 
     /* (non-simple) Functions called in main(), ordered by appearance */
@@ -106,23 +111,21 @@
      * Opens or closes a menu.
      * @param {HTMLElement} menu [role="menu"] element
      */
-    function toggleMenu(menu) {
-        // close submenus
-        let openedControllers = menu.querySelectorAll(
-            '[data-controller][aria-expanded="true"]'
-        );
-        for (let controller of openedControllers) {
-            let submenu = getMenuFromController(controller);
-            toggleMenu(submenu);
-        }
+    function toggleMenu(menu, handleFocus = true) {
         // get controller of current menu
         let controller = getControllerFromMenu(menu);
         // toggle visibility
         menu.hidden = !menu.hidden;
         // set controller's state
         controller.setAttribute('aria-expanded', !menu.hidden);
-        if (menu.hidden) {
+        if (menu.hidden && handleFocus) {
             // set focus on menu dismissal
+            let openSubControllers = menu.querySelectorAll(
+                '[data-controller][aria-expanded="true"]'
+            );
+            for(let openSubController of openSubControllers) {
+                openSubController.click();
+            }
             controller.focus();
         }
         else {
@@ -144,6 +147,17 @@
             toggleMenu(nextMenu);
             e.preventDefault();
         }
+    }
+
+    /**
+     * Collapses controller's menu when it receives focus. Ensures that when
+     * users moves focus backwards from a submenu, the submenu is 
+     * @param {Event} e focusin event
+     */
+    function closeControllerMenu(e) {
+        let controller = e.currentTarget;
+        let menu = getMenuFromController(controller);
+        if(!menu.hidden) toggleMenu(menu);
     }
 
     /* (non-simple) Functions not called directly in main() */
@@ -212,6 +226,17 @@
             // if there is no ancestor menu, then the menu variable will be null
             // and the while loop will end
             menu = controller.closest('[role="menu"]');
+        }
+    }
+
+    function closeAllMenus(e) {
+        let widget = e.currentTarget;
+        let focusTarget = e.relatedTarget;
+        if (widget.contains(focusTarget)) return;
+        let controllers = widget.querySelectorAll('[data-controller]');
+        for(let controller of controllers) {
+            let menu = getMenuFromController(controller);
+            if (!menu.hidden) toggleMenu(menu, false);
         }
     }
 
