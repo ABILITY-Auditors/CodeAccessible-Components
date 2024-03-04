@@ -14,7 +14,7 @@ If the forking is successful, it will create a new repository under your account
 
 ## Step 2: 
 
-Step 2: Clone the Project
+Step 2: Clones the Project
   Next, you need to clone your forked repo to your local machine to start making changes to the project. Click on the Code drop down button on your forked repository, and copy your preferred cloning web URL. I prefer using HTTPS.
 
 Run this command in your CLI or Terminal: ```git clone <repo_url>```
