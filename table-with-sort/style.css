@@ -1,3 +1,4 @@
+/* Option 2: Import via CSS */
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
 
 table {
@@ -6,7 +7,7 @@ table {
 }
 th,
 td {
- border: 1px solid black;
+ border: 1px solid #dddddd;
  text-align: left;
  padding: 8px;
 }
@@ -14,8 +15,15 @@ th {
  cursor: pointer;
 }
 .ascending::after {
- content: "";
+ content: "⬆️";
 }
 .descending::after {
- content: "";
+ content: "⬇️";
+}
+button {
+ display: flex;
+ padding: 0.5em;
+}
+.order {
+ padding-right: 5%;
 }

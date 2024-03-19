@@ -1,42 +1,35 @@
-let currentColumnIdx = 0;
+let currentColumnIndex = 0;
 let sortOrder = "ascending";
 
-const sortTable = (colIdx) => {
- let table = document.getElementById("container");
+function sortTable(colIndex) {
+ let table = document.getElementById("myTable");
  let rows = table.rows;
- let shouldSwitch, i; //initialize
  let switching = true;
- //  let i;
+ let shouldSwitch, i;
 
- //toggle sort order
-
- if (colIdx === currentColumnIdx) {
+ // Toggle sort order
+ if (colIndex === currentColumnIndex) {
   sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
  } else {
   sortOrder = "ascending";
-  //Reset the sort indicator for other columns
-
-  let sortBtnIndicators = document.querySelectorAll("#container th button");
-
-  sortBtnIndicators.forEach((btn) => {
-   if (btn !== btn[colIdx]) {
-    btn.classList.remove("ascending", "descending");
+  // Reset order indicator for other columns
+  let headers = document.querySelectorAll("#myTable th button");
+  headers.forEach((header) => {
+   if (header !== headers[colIndex]) {
+    header.classList.remove("ascending", "descending");
    }
   });
  }
 
  // Update current column index
-
- currentColumnIdx = colIdx;
+ currentColumnIndex = colIndex;
 
  while (switching) {
   switching = false;
-
   for (i = 1; i < rows.length - 1; i++) {
    shouldSwitch = false;
-   let x = rows[i].getElementsByTagName("TD")[colIdx];
-
-   let y = rows[i + 1].getElementsByTagName("TD")[colIdx];
+   let x = rows[i].getElementsByTagName("TD")[colIndex];
+   let y = rows[i + 1].getElementsByTagName("TD")[colIndex];
 
    if (sortOrder === "ascending") {
     if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
@@ -56,16 +49,13 @@ const sortTable = (colIdx) => {
   }
  }
 
- let orderIndicator = document.querySelectorAll(".order button")[colIdx];
-
- orderIndicator.textContent =
-  sortOrder === "ascending" ? "descending" : "ascending";
-
- let sortBtnIndicators = document.querySelectorAll("#container th button");
-
- sortBtnIndicators[currentColumnIdx].classList.remove(
-  "ascending",
-  "descending"
- );
- sortBtnIndicators[currentColumnIdx].classList.add(sortOrder);
-};
+ // Update order indicator
+ let orderIndicator = document.querySelectorAll("#myTable th button .order")[
+  colIndex
+ ];
+ orderIndicator.ariaLabel =
+  sortOrder === "ascending" ? "ascending" : "descending";
+ let headers = document.querySelectorAll("#myTable th button");
+ headers[currentColumnIndex].classList.remove("ascending", "descending");
+ headers[currentColumnIndex].classList.add(sortOrder);
+}
