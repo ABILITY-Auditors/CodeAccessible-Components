@@ -14,10 +14,10 @@ th {
  cursor: pointer;
 }
 .ascending::after {
- content: "";
+ content: "⬆️";
 }
 .descending::after {
- content: "";
+ content: "⬇️";
 }
 
 .visually-hidden {
@@ -29,4 +29,13 @@ th {
  padding: 0;
  position: absolute;
  width: 1px;
+}
+
+button {
+ display: flex;
+ padding: 0.5em;
+}
+
+.order {
+ padding-right: 5%;
 }
