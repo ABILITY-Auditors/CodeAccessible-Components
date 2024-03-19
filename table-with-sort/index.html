@@ -8,54 +8,63 @@
  </head>
  <body>
   <h1>Accessible Table with Sort</h1>
-  <table id="container">
+
+  <table id="myTable">
    <thead>
     <tr>
      <th>
       Name
-      <button class="sortBtn" aria-label="sort by name" onclick="sortTable(0)">
-       <span class="order" aria-live="polite">Sort </span>
+      <button aria-label="sort by name" class="sort-btn" onclick="sortTable(0)">
+       <span aria-live="polite" class="order">Sort</span>
+       <div id="statusContainer1">
+        <!--   append role status here  for SR only -->
+       </div>
       </button>
      </th>
      <th>
       Age
-      <button class="sortBtn" aria-label="sort by age" onclick="sortTable(1)">
-       <span class="order" aria-live="polite">Sort </span>
+      <button class="sort-btn" aria-label="sort by age" onclick="sortTable(1)">
+       <span aria-live="polite" class="order">Sort </span>
+       <div id="statusContainer2">
+        <!--   append role status here  for SR only -->
+       </div>
       </button>
      </th>
      <th>
       Country
       <button
-       class="sortBtn"
+       class="sort-btn"
        aria-label="sort by country"
        onclick="sortTable(2)"
       >
-       <span class="order" aria-live="polite">Sort </span>
+       <span aria-live="polite" class="order">Sort </span>
       </button>
+      <div id="statusContainer3">
+       <!--  append role status here for SR only -->
+      </div>
      </th>
     </tr>
    </thead>
-
    <tbody>
+    <tr>
+     <td>Justin</td>
+     <td>29</td>
+     <td>USA</td>
+    </tr>
     <tr>
      <td>Abby</td>
      <td>31</td>
      <td>USA</td>
     </tr>
     <tr>
-     <td>Justin</td>
-     <td>29</td>
-     <td>Manila</td>
-    </tr>
-    <tr>
      <td>Arya</td>
-     <td>9</td>
-     <td>Winterfell</td>
+     <td>20</td>
+     <td>UK</td>
     </tr>
     <tr>
-     <td>Stella</td>
-     <td>6</td>
-     <td>Mars</td>
+     <td>Yohan</td>
+     <td>12</td>
+     <td>Philippines</td>
     </tr>
    </tbody>
   </table>
