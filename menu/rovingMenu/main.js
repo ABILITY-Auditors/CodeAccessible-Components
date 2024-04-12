@@ -1,14 +1,13 @@
+/***** ROVING FOCUS MANAGEMENT *****/
 // Encapsulation
 (() => {
-    // TODO: updated positionMenu for 1.4.10 Reflow, 
-    // and make a test for a menu that may appear off screen.
     rovingMain();
 
     function rovingMain() {
         // components that open a menu have been given the attribute 'data-controller'
         let menuControllers = document.querySelectorAll('[data-controller]');
         for (let menuController of menuControllers) {
-            let menu = getMenuFromController(menuController);
+            let menu = getControlledMenu(menuController);
             if (menu.dataset.type !== 'roving') continue;
             initMenu(menu);
             menu.addEventListener('keydown', rovingMoveFocus);
@@ -120,7 +119,7 @@
      */
     function activateFunction(e) {
         let menuitem = e.target;
-        if ('controller' in menuitem.dataset) return;
+        if ('controller' in menuitem.dataset || e.target.role === 'menu') return;
         alert(`activated the menuitem: ${menuitem.textContent}`);
         // gets the highest level menu
         let menu = menuitem.closest('[data-menu-component]').querySelector('[role="menu"]');
@@ -136,7 +135,7 @@
         const acceptedKeys = ["ArrowRight", "Enter", " "];
         if (e.type === 'keydown' && !acceptedKeys.includes(e.key)) return;
         let controller = e.currentTarget;
-        let menu = getMenuFromController(controller);
+        let menu = getControlledMenu(controller);
         if (!menu) {
             throw new Error('malformed menu, could not find menu from controller', controller);
         }
@@ -175,7 +174,7 @@
                 '[data-controller][aria-expanded="true"]'
             );
             for (let openSubController of openSubControllers) {
-                let submenu = getMenuFromController(openSubController);
+                let submenu = getControlledMenu(openSubController);
                 // we do not handle focus on recursive calls
                 toggleMenu(submenu, false);
             }
@@ -193,8 +192,7 @@
     /**
      * Reposition a menu. Should be called after opening the menu or when the 
      * viewport size is changed to ensure that WACG SC 1.4.10 Reflow is satisfied.
-     * @param {HTMLElement} controller the component that opens a menu, 
-     *                                 "controls" the presence of the menu
+     * @param {HTMLElement} menu the menu being repositioned
      */
     function positionMenu(menu) {
         let controller = getControllerOfMenu(menu);
@@ -221,6 +219,29 @@
                 getPropertyAsNumber(menu, 'border-left-width')
                 + getPropertyAsNumber(menu, 'border-right-width');
             menu.style.width = controllerRect.width + borderWidth + 'px';
+        }
+        // we may have changed to size, so we want to updated the rect
+        // so that we can ensure that it is fully within the viewport
+        // and does not cause horizontal scrolling (this is important for
+        // 1.4.10 Reflow)
+        menuRect = menu.getBoundingClientRect();
+        // this assumes that the documentElement is the HTML element
+        // clientWidth will include everything but the vertical scrollbar
+        // when used on the html element
+        let vw = document.documentElement.clientWidth;
+        if (menuRect.width > vw) {
+            let widthOffset = vw;
+            let leftOffset = (-1 * menuRect.x);
+            menu.style.width = widthOffset + 'px';
+            menu.style.left = leftOffset + 'px';
+            // in the style sheet we've set the "white-space" CSS property
+            // to nowrap, but when the text is longer than the width of the
+            // viewport, we need to wrap the text
+            menu.style.whiteSpace = 'normal';
+        }
+        else if (menuRect.x + menuRect.width > vw) {
+            let leftOffset = vw - (menuRect.x + menuRect.width);
+            menu.style.left = leftOffset + 'px';
         }
     }
 
@@ -259,7 +280,7 @@
      * @param {HTMLElement} controller button or menuitem that controls the presence of a menu
      * @returns HTMLElement[role="menu"]
      */
-    function getMenuFromController(controller) {
+    function getControlledMenu(controller) {
         return document.getElementById(controller.getAttribute('aria-controls'));
     }
 

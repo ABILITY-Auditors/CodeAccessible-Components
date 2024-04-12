@@ -15,8 +15,21 @@
 <body>
     <main>
         <div class="example">
+            <button>test anchor, does nothing</button>
+            <p id="instructions">
+                Keyboard usage:
+                <ul>
+                    <li>Arrow Right: opens submenu if the menu item controls a submenu.</li>
+                    <li>Arrow Left, Escape: closes the current submenu and places focus on the related controller.</li>
+                    <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
+                    <li>Arrow Down/Up: move focus within the menu.</li>
+                    <li>Shift+Tab: closes current menu and returns focus onto the menu's controller.</li>
+                    <li>Tab: closes all menus and moves focus to the next component on the page.</li>
+                </ul>
+            </p>
             <!-- 
                 AT = Assistive Technology
+                SR = Screen Reader
 
                 Roving vs Sedentary focus management:
                 - Roving focus management: 
@@ -27,6 +40,20 @@
                     this menu currently has focus. AT will be notified when this 
                     attribute is changed and will, as a result, notify users of 
                     the change in focus.
+                    For sedentary focus management we make a distinction between
+                    two different types of focus:
+                        - browser focus: the element the browser is focusing.
+                            document.activeElement should give you the element
+                            that currently has browser focus
+                        - programmatic focus: the element that assistive technologies
+                            understand to have focus. This focus is only used in
+                            sedentary focus management style, where browser focus
+                            remains on an element with a widget role such as MENU,
+                            and the attribute ARIA-ACTIVEDESCENDANT indicates to
+                            assistive technolgies which element currently has
+                            programmatic focus. When programmatic focus changes
+                            (i.e. ARIA-ACTIVEDESCENDANT changes) AT will typically
+                            act the same way as if browser focus had changed.
 
                 Relevant Attribtues:
                     button#menu-opener-sedentary-focus:
@@ -42,7 +69,8 @@
                             is primarily with the arrow keys.
                     - (OPTIONAL ) aria-controls:
                             indicates to AT that this component controls the
-                            element with this id. 
+                            element with this id. Typically only useful for
+                            JAWS
                     Note: 
                         This button element is not considered part of the 
                         composite menu widget. It merely controls the 
@@ -55,13 +83,18 @@
                             on the role of an element. With interactive widgets
                             like a menu, AT will also notify users of the role
                             so that they understand how to interact with it.
-                    - (OPTIONAL ) aria-labelledby:
-                            provides an accessible name to the menu.
+                    - (NECESSARY) aria-labelledby:
+                            provides an accessible name to the menu. NVDA does not
+                            expose this name when navigating using browser focus,
+                            but it IS exposed when navigating using the virtual
+                            cursor. We always recommend giving an accessible name
+                            to an element with an interactive role - the MENU role
+                            is considered interactive.
              -->
 
             <!-- ROVING FOCUS MANAGEMENT EXAMPLE -->
             <h2>Roving Focus Menu Example</h2>
-            <div data-menu-component="roving">
+            <div data-menu-component>
                 <button id="menu-opener-roving-focus" 
                     aria-expanded="false"
                     aria-haspopup="menu"
@@ -69,34 +102,36 @@
                     data-controller>
                     Edit text properties
                 </button>
-                <ul id="menu-example-roving-focus" role="menu" 
+                <ul id="menu-example-roving-focus" 
+                    role="menu" 
                     aria-labelledby="menu-opener-roving-focus" 
                     data-type="roving"
                     data-reset-focus
                     hidden>
-                    <li id="b0" role="menuitem" tabindex="0">Increase opacity</li>
-                    <li id="b1" role="menuitem">Decrease opacity</li>
-                    <li id="b2" role="menuitem">Increase text size</li>
-                    <li id="b3" role="menuitem">Decrease text size</li>
-                    <li id="b4" role="menuitem" 
+                    <li id="rov-a0" role="menuitem" tabindex="0">Increase opacity</li>
+                    <li id="rov-a1" role="menuitem">Decrease opacity</li>
+                    <li id="rov-a2" role="menuitem">Increase text size</li>
+                    <li id="rov-a3" role="menuitem">Decrease text size</li>
+                    <li id="rov-a4" role="menuitem" 
                         aria-expanded="false" 
                         aria-haspopup="menu"
                         aria-controls="example-submenu" 
                         data-controller>
                         Text transformations
                     </li>
-                    <li id="b5" role="menuitem">Copy text</li>
-                    <li id="b6" role="menuitem">Hide text</li>
+                    <li id="rov-a5" role="menuitem">Copy text</li>
+                    <li id="rov-a6" role="menuitem">Hide text</li>
                 </ul>
-                <!-- treats submenu -->
-                <ul id="example-submenu" role="menu" 
-                    aria-labelledby="b4"
+                <!-- first-level submenu -->
+                <ul id="example-submenu" 
+                    role="menu" 
+                    aria-labelledby="rov-a4"
                     data-type="roving"
                     hidden>
-                    <li id="d0" role="menuitem" tabindex="0">Skew text</li>
-                    <li id="d1" role="menuitem">Strikethrough text</li>
-                    <li id="d2" role="menuitem">Underline text</li>
-                    <li id="d3" role="menuitem" 
+                    <li id="rov-b0" role="menuitem" tabindex="0">Skew text</li>
+                    <li id="rov-b1" role="menuitem">Strikethrough text</li>
+                    <li id="rov-b2" role="menuitem">Underline text</li>
+                    <li id="rov-b3" role="menuitem" 
                         aria-expanded="false" 
                         aria-haspopup="menu"
                         aria-controls="example-sub-submenu" 
@@ -104,22 +139,35 @@
                         Text effects
                     </li>
                 </ul>
-                <!-- more treats submenu -->
-                <ul id="example-sub-submenu" role="menu"  
-                    aria-labelledby="d3"
+                <!-- second-level submenu -->
+                <ul id="example-sub-submenu" 
+                    role="menu"  
+                    aria-labelledby="rov-b3"
                     data-type="roving"
                     hidden>
-                    <li id="e0" role="menuitem" tabindex="0">Add dropshadow</li>
-                    <li id="e1" role="menuitem">Add text outline</li>
-                    <li id="e2" role="menuitem">Remove all formatting</li>
+                    <li id="rov-c0" role="menuitem" tabindex="0">Add dropshadow</li>
+                    <li id="rov-c1" role="menuitem">Add text outline</li>
+                    <li id="rov-c2" role="menuitem">Remove all formatting</li>
                 </ul>
             </div>
 
-            <button>test anchor, does nothing</button>
+            
             <p>
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!
             </p>
             <button>test anchor, does nothing</button>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!
+            </p>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!
+            </p>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!
+            </p>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!
+            </p>
         </div>
     </main>
 </body>
