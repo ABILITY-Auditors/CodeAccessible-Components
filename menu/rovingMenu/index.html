@@ -21,8 +21,11 @@
                 <ul>
                     <li>Arrow Right: opens submenu if the menu item controls a submenu.</li>
                     <li>Arrow Left, Escape: closes the current submenu and places focus on the related controller.</li>
-                    <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
                     <li>Arrow Down/Up: move focus within the menu.</li>
+                    <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
+                    <li>Home: move focus to the first menuitem.</li>
+                    <li>End: move focus to the last menuitem.</li>
+                    <li>letter (a-Z): moves focus to the next menuitem that starts with the letter. Wraps around.</li>
                     <li>Shift+Tab: closes current menu and returns focus onto the menu's controller.</li>
                     <li>Tab: closes all menus and moves focus to the next component on the page.</li>
                 </ul>
@@ -94,7 +97,7 @@
 
             <!-- ROVING FOCUS MANAGEMENT EXAMPLE -->
             <h2>Roving Focus Menu Example</h2>
-            <div data-menu-component>
+            <div data-menu-component="roving">
                 <button id="menu-opener-roving-focus" 
                     aria-expanded="false"
                     aria-haspopup="menu"
@@ -150,7 +153,10 @@
                     <li id="rov-c2" role="menuitem">Remove all formatting</li>
                 </ul>
             </div>
-
+            <!-- end menu -->
+            <!-- extra text to so that we can test ensuring that items receiving focus are 
+            visible while focused - when using ARIA-ACTIVEDESCENDANT there is a possibility that
+            content in focus will be offscreen. -->
             
             <p>
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur, repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam, officia quas!

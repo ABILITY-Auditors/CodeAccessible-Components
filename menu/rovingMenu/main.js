@@ -10,14 +10,11 @@
             let menu = getControlledMenu(menuController);
             if (menu.dataset.type !== 'roving') continue;
             initMenu(menu);
-            menu.addEventListener('keydown', rovingMoveFocus);
-            menu.addEventListener('keydown', closeMenu);
-            menu.addEventListener('keydown', keyboardActivateFunction);
+            menu.addEventListener('keydown', rovingKeyEventRouter);
             menu.addEventListener('click', activateFunction);
             menuController.addEventListener('click', controllerActivation);
-            menuController.addEventListener('keydown', controllerActivation);
         }
-        let menuWidgets = document.querySelectorAll('[data-menu-component]');
+        let menuWidgets = document.querySelectorAll('[data-menu-component="roving"]');
         for (let menuWidget of menuWidgets) {
             menuWidget.addEventListener('focusout', closeAllMenus);
         }
@@ -51,66 +48,87 @@
     }
 
     /**
-     * Handles moving focus using ArrowUp, ArrowDown, and Tab navigation.
+     * Handles keyboard events.
      * @param {KeydownEvent} e event
      */
-    function rovingMoveFocus(e) {
-        const acceptableKeys = ['ArrowUp', 'ArrowDown', 'Tab'];
-        if (!acceptableKeys.includes(e.key)) return;
+    function rovingKeyEventRouter(e) {
         let menuitem = e.target;
+        let menu = e.currentTarget;
         let nextMenuitem;
-        switch (e.key) {
+        // we can't use a regex in switch without getting nifty, so
+        // we set a-z or A-Z as "Letter" and use that in the switch statement
+        let key = e.key.match(/^[a-zA-Z]$/) ? 'Letter' : e.key;
+
+        switch (key) {
+            case 'Letter':
+                nextMenuitem = matchMenuitemFromLetter(menu, menuitem, e.key);
+                if (!nextMenuitem) return;
             case 'ArrowUp':
-                nextMenuitem = document.getElementById(menuitem.dataset.previous);
+                nextMenuitem ||= document.getElementById(menuitem.dataset.previous);
             case 'ArrowDown':
                 nextMenuitem ||= document.getElementById(menuitem.dataset.next);
+            case 'Home':
+                nextMenuitem ||= menu.querySelector('[role="menuitem"]');
+            case 'End':
+                nextMenuitem ||= menu.querySelector('[role="menuitem"]:last-child');
+                // change focus
                 menuitem.tabIndex = -1;
                 nextMenuitem.tabIndex = 0;
                 nextMenuitem.focus();
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+                if (!('controller' in menuitem.dataset)) return;
+                nextMenu = document.getElementById(
+                    menuitem.getAttribute('aria-controls')
+                );
+                toggleMenu(nextMenu);
+                break;
+            case 'ArrowLeft':
+            case 'Escape':
+                toggleMenu(e.currentTarget);
+                e.preventDefault();
                 break;
             case 'Tab':
-                let movingBackwards = e.getModifierState('Shift');
-                let menu = menuitem.closest('[role="menu"]');
-                if (movingBackwards) {
-                    // if moving focus backwards, close the current menu
-                    // toggleMenu will handle focus and place it on the controller
-                    toggleMenu(menu);
-                }
-                else {
-                    /* 1. if there's an open submenu, focus will naturally move to the next 
-                     * focusable element in that menu
-                     * 2. if there isn't an open submenu, then focus will naturally leave 
-                     * the menu, and the focusout event will fire and close the entire 
-                     * menu widget; So ultimately we don't need to do anything except let 
-                     * focus move naturally. We return to ensure that the e.preventDefault()
-                     * is not called allowing the focus to move naturally.*/
-                    return;
-                }
+                if (!e.getModifierState('Shift')) return;
+                toggleMenu(menu);
+                e.preventDefault();
+                break;
+            case 'Enter':
+            case ' ':
+                if ('controller' in menuitem.dataset) menuitem.click();
+                else activateFunction(e);
                 break;
         }
-        e.preventDefault();
     }
 
     /**
-     * Handles Escape and ArrowLeft, and closes the current menu. Focus is handled.
-     * @param {KeydownEvent} e e.currentTarget = menu
+     * Matches the next menuitem in the current menu based on the menuitems 
+     * first letter and the given letter.
+     * @param {HTMLElement<role=menu>} menu the currently opened menu
+     * @param {HTMLElement<role=menuitem>} menuitem the currently focused menuitem
+     * @param {String} letter the character to match
+     * @returns HTMLElement<role=menuitem> if a match is found. null if no match is found.
      */
-    function closeMenu(e) {
-        const acceptedKeys = ['Escape', 'ArrowLeft'];
-        if (!acceptedKeys.includes(e.key)) return;
-        toggleMenu(e.currentTarget);
-        e.preventDefault();
-    }
-
-    /**
-     * Handles keyboard activation of menuitems. Checks keys, if good 
-     * calls activateFunction.
-     * @param {KeydownEvent} e event
-     */
-    function keyboardActivateFunction(e) {
-        const acceptedKeys = ['Enter', ' '];
-        if (!acceptedKeys.includes(e.key)) return;
-        activateFunction(e);
+    function matchMenuitemFromLetter(menu, menuitem, letter) {
+        let menuitems;
+        let i;
+        menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
+        i = menuitems.indexOf(menuitem);
+        const next = () => {
+            i = (i + 1) % menuitems.length;
+            return menuitems[i];
+        }
+        let curMenuitem;
+        let foundMenuitem;
+        while ((curMenuitem = next()) !== menuitem) {
+            let firstLetter = curMenuitem.textContent.trim().charAt(0);
+            if (letter.toLowerCase() === firstLetter.toLowerCase()) {
+                foundMenuitem = curMenuitem;
+                break;
+            }
+        }
+        return foundMenuitem;
     }
 
     /**
@@ -132,8 +150,6 @@
      * @param {Event} e keydown or click event
      */
     function controllerActivation(e) {
-        const acceptedKeys = ["ArrowRight", "Enter", " "];
-        if (e.type === 'keydown' && !acceptedKeys.includes(e.key)) return;
         let controller = e.currentTarget;
         let menu = getControlledMenu(controller);
         if (!menu) {
@@ -164,6 +180,7 @@
      * @param {Boolean} handleFocus if true focus will be placed on the menu's controller
      */
     function toggleMenu(menu, handleFocus = true) {
+
         let controller = getControllerOfMenu(menu);
         menu.hidden = !menu.hidden;
         // set controller's state
@@ -261,7 +278,7 @@
         else {
             currentMenuitem.focus();
         }
-    } 
+    }
 
 
     /* Simple Functions */

@@ -9,13 +9,11 @@
             let menu = getControlledMenu(menuController);
             if (menu.dataset.type !== 'sedentary') continue;
             initMenu(menu);
-            menu.addEventListener('keydown', sedentaryFocusManager);
-            menu.addEventListener('keydown', closeMenu);
-            menu.addEventListener('keydown', keyboardActivation);
+            menu.addEventListener('keydown', sedentaryKeyEventRouter);
             menu.addEventListener('click', pointerActivation);
             menuController.addEventListener('click', controllerActivation);
         }
-        let menuWidgets = document.querySelectorAll('[data-menu-component]');
+        let menuWidgets = document.querySelectorAll('[data-menu-component="sedentary"]');
         for (let menuWidget of menuWidgets) {
             menuWidget.addEventListener('focusout', closeAllMenus);
         }
@@ -31,7 +29,9 @@
     function initMenu(menu) {
         // only get menutitems part of the scope
         // filter out any menuitems not part of the current menu
-        let menuitems = [...menu.querySelectorAll(':is([role="menuitem"], [data-controller])')];
+        let menuitems = [...menu.querySelectorAll(
+            ':is([role="menuitem"], [data-controller])'
+        )];
         // iterate over all menuitems and add dataset.next and dataset.previous
         for (let i = 0; i < menuitems.length; i++) {
             let menuitem = menuitems[i];
@@ -52,103 +52,91 @@
      * Takes keyboard events and handles focus. 
      * @param {KeyboardEvent} e the keyboard event
      */
-    function sedentaryFocusManager(e) {
+    function sedentaryKeyEventRouter(e) {
         // if not moving through the menu, return
         let menu = e.currentTarget;
         let menuitem = document.getElementById(
             menu.getAttribute('aria-activedescendant')
         );
+        // we can't use a regex in switch without getting nifty, so
+        // we set a-z or A-Z as "Letter" and use that in the switch statement
+        let key = e.key.match(/^[a-zA-Z]$/) ? 'Letter' : e.key;
+
         if (e.key === 'ArrowRight' && !menuitem.matches('[data-controller]')) return;
 
-        // get the next menu item to be focused
-        let nextMenuitem, nextMenu;
-        if (e.key === 'ArrowUp') {
-            nextMenuitem = document.getElementById(menuitem.dataset.previous);
+        let nextMenuitem;
+        switch (key) {
+            case 'Letter':
+                nextMenuitem = matchMenuitemFromLetter(menu, menuitem, e.key);
+                if (!nextMenuitem) return;
+            case 'ArrowUp':
+                nextMenuitem ||= document.getElementById(menuitem.dataset.previous);
+            case 'ArrowDown':
+                nextMenuitem ||= document.getElementById(menuitem.dataset.next);
+            case 'Home':
+                nextMenuitem ||= menu.querySelector('[role="menuitem"]');
+            case 'End':
+                nextMenuitem ||= menu.querySelector('[role="menuitem"]:last-child');
+                setSedentaryFocus(menu, nextMenuitem);
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+                let nextMenu = document.getElementById(
+                    menuitem.getAttribute('aria-controls')
+                );
+                toggleMenu(nextMenu);
+                nextMenuitem = document.getElementById(
+                    nextMenu.getAttribute('aria-activedescendant')
+                );
+                setSedentaryFocus(nextMenu, nextMenuitem);
+                e.preventDefault();
+                break;
+            case 'ArrowLeft':
+            case 'Escape':
+                toggleMenu(e.currentTarget);
+                e.preventDefault();
+                break;
+            case 'Enter':
+            case ' ':
+                activateFunction(menuitem);
+                e.preventDefault();
+                break;
+            case 'Tab':
+                if (!e.getModifierState('Shift')) return;
+                let controller = getControllerOfMenu(menu);
+                controller.click();
+                e.preventDefault();
+                break;
         }
-        else if (e.key === 'ArrowDown') {
-            nextMenuitem = document.getElementById(menuitem.dataset.next);
-        }
-        else if (e.key === 'ArrowRight') {
-            nextMenu = document.getElementById(
-                menuitem.getAttribute('aria-controls')
-            );
-            toggleMenu(nextMenu);
-            nextMenuitem = document.getElementById(
-                nextMenu.getAttribute('aria-activedescendant')
-            );
-        }
-        else if (e.key === 'Home') {
-            nextMenuitem = menu.querySelector('[role="menuitem"]');
-        }
-        else if (e.key === 'End') {
-            nextMenuitem = menu.querySelector('[role="menuitem"]:last-child');
-        }
-        else if (e.key.match(/^[a-zA-Z]$/)) {
-            let menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
-            let curMenuitem;
-            let i = menuitems.indexOf(menuitem);
-            const next = () => {
-                i = (i + 1) % menuitems.length;
-                return menuitems[i];
-            }
-            while ((curMenuitem = next()) !== menuitem) {
-                let firstLetter = curMenuitem.textContent.trim().charAt(0);
-                if (e.key.toLowerCase() === firstLetter.toLowerCase()) {
-                    nextMenuitem = curMenuitem;
-                    break;
-                }
-            }
-            // could not find menuitem that started with letter
-            if (!nextMenuitem) return;
-        }
-        else if (e.key === 'Tab' && e.getModifierState('Shift')) {
-            // handle moving focus backwards
-            let controller = getControllerOfMenu(menu);
-            controller.click();
-            e.preventDefault();
-            return;
-        }
-        else {
-            // unacceptable key, just return
-            return;
-        }
-        // key was acceptable, and the nextMenuitem has been set
-        // if we're opening a new menu, the nextMenu will have been set
-        // otherwise if it hasn't been set, we set it to the current open menu
-        nextMenu ||= menu;
-        // set focus
-        // note that "aria-activedescendant" effectively sets the focus for
-        // assistive technology, even though the browser's focus remains on the
-        // [role="menu"] element
-        setSedentaryFocus(nextMenu, nextMenuitem);
-        e.preventDefault();
     }
 
     /**
-     * Handles keyboard closing of menus
-     * @param {KeyboardEvent} e e.currentTarget
+     * Matches the next menuitem in the current menu based on the menuitems 
+     * first letter and the given letter.
+     * @param {HTMLElement<role=menu>} menu the currently opened menu
+     * @param {HTMLElement<role=menuitem>} menuitem the currently focused menuitem
+     * @param {String} letter the character to match
+     * @returns HTMLElement<role=menuitem> if a match is found. null if no match is found.
      */
-    function closeMenu(e) {
-        const acceptableKeys = ['Escape', 'ArrowLeft'];
-        if (!acceptableKeys.includes(e.key)) return;
-        console.log('closing menu', e.currentTarget);
-        toggleMenu(e.currentTarget);
-        e.preventDefault();
-    }
-
-    /**
-     * Handles keyboard activation of components
-     * @param {KeyboardEvent} e event
-     */
-    function keyboardActivation(e) {
-        const acceptableKeys = ['Enter', ' '];
-        if (!acceptableKeys.includes(e.key)) return;
-        let menu = e.currentTarget;
-        let menuitem = document.getElementById(
-            menu.getAttribute('aria-activedescendant')
-        );
-        e.preventDefault();
-        activateFunction(menuitem);
+    function matchMenuitemFromLetter(menu, menuitem, letter) {
+        let menuitems;
+        let i;
+        menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
+        i = menuitems.indexOf(menuitem);
+        const next = () => {
+            i = (i + 1) % menuitems.length;
+            return menuitems[i];
+        }
+        let curMenuitem;
+        let foundMenuitem;
+        while ((curMenuitem = next()) !== menuitem) {
+            let firstLetter = curMenuitem.textContent.trim().charAt(0);
+            if (letter.toLowerCase() === firstLetter.toLowerCase()) {
+                foundMenuitem = curMenuitem;
+                break;
+            }
+        }
+        return foundMenuitem;
     }
 
     /**
@@ -211,8 +199,6 @@
             let submenu = getControlledMenu(controller);
             toggleMenu(submenu, false);
         }
-        // get controller of current menu
-
 
         // set controller's state
         controller.setAttribute('aria-expanded', menu.hidden);
@@ -234,7 +220,7 @@
             menu.hidden = !menu.hidden;
         }
         else {
-            // if menu was opened
+            // this happens if menu was opened
 
             // in sedentary focus management, focus remains on the menu element
             // and assistive technology is notified of the element in focus by 
