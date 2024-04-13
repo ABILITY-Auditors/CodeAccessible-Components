@@ -66,7 +66,7 @@ ul[role="menu"] [data-controller]:hover {
     color: black;
 }
 
-[data-menu-component] {
+[data-menu-widget] {
     margin: 0;
     padding: 0;
     position: relative;

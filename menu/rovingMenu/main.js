@@ -4,19 +4,19 @@
     rovingMain();
 
     function rovingMain() {
-        // components that open a menu have been given the attribute 'data-controller'
-        let menuControllers = document.querySelectorAll('[data-controller]');
-        for (let menuController of menuControllers) {
-            let menu = getControlledMenu(menuController);
-            if (menu.dataset.type !== 'roving') continue;
-            initMenu(menu);
-            menu.addEventListener('keydown', rovingKeyEventRouter);
-            menu.addEventListener('click', activateFunction);
-            menuController.addEventListener('click', controllerActivation);
-        }
-        let menuWidgets = document.querySelectorAll('[data-menu-component="roving"]');
+        // only want roving menu widgets
+        let menuWidgets = document.querySelectorAll('[data-menu-widget="roving"]');
         for (let menuWidget of menuWidgets) {
             menuWidget.addEventListener('focusout', closeAllMenus);
+
+            let menuControllers = menuWidget.querySelectorAll('[data-controller]');
+            for (let menuController of menuControllers) {
+                let menu = getControlledMenu(menuController);
+                initMenu(menu);
+                menu.addEventListener('keydown', rovingKeyEventRouter);
+                menu.addEventListener('click', activateFunction);
+                menuController.addEventListener('click', controllerActivation);
+            }
         }
     }
 
@@ -90,9 +90,13 @@
                 e.preventDefault();
                 break;
             case 'Tab':
-                if (!e.getModifierState('Shift')) return;
-                toggleMenu(menu);
-                e.preventDefault();
+                if (!e.getModifierState('Shift')) {
+                    toggleMenu(menu, false);
+                }
+                else {
+                    toggleMenu(menu);
+                    e.preventDefault();
+                }
                 break;
             case 'Enter':
             case ' ':
@@ -140,7 +144,7 @@
         if ('controller' in menuitem.dataset || e.target.role === 'menu') return;
         alert(`activated the menuitem: ${menuitem.textContent}`);
         // gets the highest level menu
-        let menu = menuitem.closest('[data-menu-component]').querySelector('[role="menu"]');
+        let menu = menuitem.closest('[data-menu-widget]').querySelector('[role="menu"]');
         toggleMenu(menu);
         e.preventDefault();
     }
@@ -213,7 +217,7 @@
      */
     function positionMenu(menu) {
         let controller = getControllerOfMenu(menu);
-        let ancestor = controller.closest('[data-menu-component]');
+        let ancestor = controller.closest('[data-menu-widget]');
         if (!ancestor) {
             console.warn("can't position submenu, ancestor not found!");
             return;

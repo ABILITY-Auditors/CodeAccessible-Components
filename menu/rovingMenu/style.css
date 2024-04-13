@@ -50,7 +50,7 @@ ul[role="menu"] [data-controller] {
     width: 100%;
 }
 
-[data-menu-component] {
+[data-menu-widget] {
     margin: 0;
     padding: 0;
     position: relative;

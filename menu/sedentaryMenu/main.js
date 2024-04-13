@@ -4,18 +4,18 @@
     sedentaryMain();
 
     function sedentaryMain() {
-        let menuControllers = document.querySelectorAll('[data-controller]');
-        for (let menuController of menuControllers) {
-            let menu = getControlledMenu(menuController);
-            if (menu.dataset.type !== 'sedentary') continue;
-            initMenu(menu);
-            menu.addEventListener('keydown', sedentaryKeyEventRouter);
-            menu.addEventListener('click', pointerActivation);
-            menuController.addEventListener('click', controllerActivation);
-        }
-        let menuWidgets = document.querySelectorAll('[data-menu-component="sedentary"]');
+        // only want sedentary menu widgets
+        let menuWidgets = document.querySelectorAll('[data-menu-widget="sedentary"]');
         for (let menuWidget of menuWidgets) {
-            menuWidget.addEventListener('focusout', closeAllMenus);
+
+            let menuControllers = menuWidget.querySelectorAll('[data-controller]');
+            for (let menuController of menuControllers) {
+                let menu = getControlledMenu(menuController);
+                initMenu(menu);
+                menu.addEventListener('keydown', sedentaryKeyEventRouter);
+                menu.addEventListener('click', pointerActivation);
+                menuController.addEventListener('click', controllerActivation);
+            }
         }
     }
 
@@ -102,10 +102,14 @@
                 e.preventDefault();
                 break;
             case 'Tab':
-                if (!e.getModifierState('Shift')) return;
-                let controller = getControllerOfMenu(menu);
-                controller.click();
-                e.preventDefault();
+                if (!e.getModifierState('Shift')) {
+                    closeAllMenus(menu);
+                }
+                else {
+                    let controller = getControllerOfMenu(menu);
+                    controller.click();
+                    e.preventDefault();
+                }
                 break;
         }
     }
@@ -171,14 +175,14 @@
      * Closes all menus when focus moves outside of the widget.
      * @param {FocusoutEvent} e the focusout event
      */
-    function closeAllMenus(e) {
-        let widget = e.currentTarget;
-        let focusTarget = e.relatedTarget;
-        let menu = widget.querySelector('[role="menu"]');
+    function closeAllMenus(menu) {
+        let widget = menu.closest('[data-menu-widget]')
+        menu = widget.querySelector('[role="menu"]');
         // called on focusout which bubbles up, so if the widget contains the 
         // focusTarget the other eventlisteners should be dealing with focus 
         // management. if the menu is hidden, then we do not want to open it.
-        if (widget.contains(focusTarget) || menu.hidden) return;
+        // if (widget.contains(focusTarget) || menu.hidden) return;
+        console.log('closing all menus');
         toggleMenu(menu, false);
     }
 
@@ -190,7 +194,6 @@
      */
     function toggleMenu(menu, handleFocus = true) {
         let controller = getControllerOfMenu(menu);
-        console.log(`toggling menu for ${controller.textContent}`, menu, handleFocus);
         // close submenus
         let openedControllers = menu.querySelectorAll(
             '[data-controller][aria-expanded="true"]'
@@ -218,6 +221,7 @@
             // MUST TOGGLE VISIBLITY AFTER SETTING FOCUS
             // otherwise the "focusout" event is not properly handled
             menu.hidden = !menu.hidden;
+
         }
         else {
             // this happens if menu was opened
@@ -273,7 +277,7 @@
      */
     function positionMenu(menu) {
         let controller = getControllerOfMenu(menu);
-        let ancestor = controller.closest('[data-menu-component]');
+        let ancestor = controller.closest('[data-menu-widget]');
         if (!ancestor) {
             console.warn("can't position submenu, ancestor not found!");
             return;

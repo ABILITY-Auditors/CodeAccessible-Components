@@ -1,7 +1,7 @@
 
 # ARIA Menu Widget
 
-## Table of content:
+## Table of contents:
  - [Focus Indicator](#focus-indicator)
  - [Complexity](#complexity)
  - [Focus Management](#focus-management)
