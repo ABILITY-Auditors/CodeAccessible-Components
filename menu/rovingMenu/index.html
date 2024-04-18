@@ -102,7 +102,7 @@
                     aria-haspopup="menu"
                     aria-controls="menu-example-roving-focus"
                     data-controller>
-                    Edit text properties
+                    Edit text properties (roving)
                 </button>
                 <ul id="menu-example-roving-focus" 
                     role="menu" 
@@ -111,18 +111,20 @@
                     data-reset-focus
                     hidden>
                     <li id="rov-a0" role="menuitem" tabindex="0">Increase opacity</li>
-                    <li id="rov-a1" role="menuitem">Decrease opacity</li>
-                    <li id="rov-a2" role="menuitem">Increase text size</li>
-                    <li id="rov-a3" role="menuitem">Decrease text size</li>
-                    <li id="rov-a4" role="menuitem" 
+                    <li id="rov-a1" role="menuitem" tabindex="-1">Decrease opacity</li>
+                    <li id="rov-a2" role="menuitem" tabindex="-1">Increase text size</li>
+                    <li id="rov-a3" role="menuitem" tabindex="-1">Decrease text size</li>
+                    <li id="rov-a4" role="menuitem" tabindex="-1"
                         aria-expanded="false" 
                         aria-haspopup="menu"
                         aria-controls="example-submenu" 
                         data-controller>
                         Text transformations
+                        <!-- this span has no pointer events  -->
+                        <span class="arrow" aria-hidden="true"></span>
                     </li>
-                    <li id="rov-a5" role="menuitem">Copy text</li>
-                    <li id="rov-a6" role="menuitem">Hide text</li>
+                    <li id="rov-a5" role="menuitem" tabindex="-1">Copy text</li>
+                    <li id="rov-a6" role="menuitem" tabindex="-1">Hide text</li>
                 </ul>
                 <!-- first-level submenu -->
                 <ul id="example-submenu" 
@@ -131,14 +133,15 @@
                     data-type="roving"
                     hidden>
                     <li id="rov-b0" role="menuitem" tabindex="0">Skew text</li>
-                    <li id="rov-b1" role="menuitem">Strikethrough text</li>
-                    <li id="rov-b2" role="menuitem">Underline text</li>
-                    <li id="rov-b3" role="menuitem" 
+                    <li id="rov-b1" role="menuitem" tabindex="-1">Strikethrough text</li>
+                    <li id="rov-b2" role="menuitem" tabindex="-1">Underline text</li>
+                    <li id="rov-b3" role="menuitem" tabindex="-1"
                         aria-expanded="false" 
                         aria-haspopup="menu"
                         aria-controls="example-sub-submenu" 
                         data-controller>
                         Text effects
+                        <span class="arrow" aria-hidden="true"></span>
                     </li>
                 </ul>
                 <!-- second-level submenu -->
@@ -148,8 +151,8 @@
                     data-type="roving"
                     hidden>
                     <li id="rov-c0" role="menuitem" tabindex="0">Add dropshadow</li>
-                    <li id="rov-c1" role="menuitem">Add text outline</li>
-                    <li id="rov-c2" role="menuitem">Remove all formatting</li>
+                    <li id="rov-c1" role="menuitem" tabindex="-1">Add text outline</li>
+                    <li id="rov-c2" role="menuitem" tabindex="-1">Add text glow</li>
                 </ul>
             </div>
             <!-- end menu -->

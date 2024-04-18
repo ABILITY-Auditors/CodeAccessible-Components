@@ -1,3 +1,11 @@
+:root {
+    --br: max(0.15rem, 2px);
+    --focus-color: #222;
+    --hover-color: rgb(199, 200, 247);
+    --hover-dark-color: rgb(68, 68, 94);
+}
+
+
 .example {
     margin: 0;
     padding: 0;
@@ -31,15 +39,6 @@ ul[role="menu"] ul[role="menu"] {
     top: 0;
 }
 
-ul[role="menu"] [data-controller]::after {
-    content: "...->";
-    font-family: 'Courier New', Courier, monospace;
-}
-
-ul[role="menu"] [data-controller][aria-expanded="true"]::after {
-    content: "....v";
-}
-
 li[role="menuitem"],
 ul[role="menu"] [data-controller] {
     cursor: pointer;
@@ -71,4 +70,114 @@ li[role="menuitem"]:hover,
 ul[role="menu"] [data-controller]:hover {
     background-color: rgb(199, 200, 247);
     color: black;
+}
+
+
+.example {
+    margin: 0;
+    padding: 0;
+}
+
+.active {
+    background-color: rgb(85, 85, 185);
+}
+
+/* we remove the default outline as the menuitems 
+   in focus are given their own custom focus indicator */
+ul[role="menu"] {
+    outline: none;
+    
+}
+
+ul[role="menu"] [data-controller] {
+    border: none;
+    background: transparent;
+}
+
+ul[role="menu"],
+ul[role="menu"] * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+}
+
+ul[role="menu"] {
+    position: absolute;
+    z-index: 1;
+
+    box-shadow: 0px 4px 5px -2px black;
+    border: max(1px, 0.15rem) solid black;
+    list-style: none;
+    white-space: nowrap;
+    padding: max(0.15rem, 2px);
+    border-radius: calc(2 * var(--br));
+}
+
+ul[role="menu"] ul[role="menu"] {
+    top: 0;
+}
+
+li[role="menuitem"],
+ul[role="menu"] [data-controller] {
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: max(0.15rem, 2px);
+    border: 2px solid transparent;
+}
+
+li[role="menuitem"]:hover,
+ul[role="menu"] [data-controller]:hover {
+    border-color: var(--hover-dark-color);
+    background-color: var(--hover-color);
+    color: black;
+}
+
+[data-menu-widget] {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+[role="menuitem"]:focus {
+    background-color: #222;
+    color: white;
+}
+
+[role="menuitem"]:focus:hover {
+    background-color: var(--hover-color);
+    color: black;
+}
+
+button[data-controller]:focus {
+    outline-offset: var(--br);
+    border-color: var(--focus-color);
+    border-radius: var(--br);
+    box-shadow: 1px 1px 3px -1px black;
+    outline: var(--br) solid var(--focus-color);
+}
+
+[data-controller] {
+    display: flex;
+    justify-content: space-between;
+}
+
+[data-controller] .arrow {
+    background: transparent;
+    /* important to make sure the javascript works */
+    pointer-events: none;
+}
+
+[data-controller] .arrow::before {
+    content: '->';
+    font-family: 'Courier New', Courier, monospace;
+   
+}
+
+[data-controller][aria-expanded="true"] .arrow::before {
+    content: '.v';
 }

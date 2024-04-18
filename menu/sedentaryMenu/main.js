@@ -7,6 +7,7 @@
         // only want sedentary menu widgets
         let menuWidgets = document.querySelectorAll('[data-menu-widget="sedentary"]');
         for (let menuWidget of menuWidgets) {
+            menuWidget.addEventListener('focusout', closeAllMenus);
 
             let menuControllers = menuWidget.querySelectorAll('[data-controller]');
             for (let menuController of menuControllers) {
@@ -102,14 +103,28 @@
                 e.preventDefault();
                 break;
             case 'Tab':
-                if (!e.getModifierState('Shift')) {
-                    closeAllMenus(menu);
-                }
-                else {
+                if (e.getModifierState('Shift')) {
                     let controller = getControllerOfMenu(menu);
                     controller.click();
                     e.preventDefault();
                 }
+                break;
+            case 'F6':
+                // Browsers let users cycle between panels using F6
+                // In Chrome, when the user cycles back onto the viewport panel
+                // focus is placed back onto the element that had focus before 
+                // cycling between panels. Without this code, the menu will still
+                // collapse, but Chrome tries to return focus to an element that is
+                // hidden. With this code, we prepare and place focus on the menu 
+                // controller. This does not affect Firefox, as Firefox returns focus
+                // to the beginning of the viewport document.
+                let widget = menu.closest('[data-menu-widget]');
+                let firstLevelMenu = widget.querySelector('[role="menu"]');
+                let controller = getControllerOfMenu(firstLevelMenu);
+                toggleMenu(firstLevelMenu, false);
+                controller.focus();
+                // we do not preventDefault, default behavior is to move focus between
+                // panels in the browser.
                 break;
         }
     }
@@ -127,6 +142,7 @@
         let i;
         menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
         i = menuitems.indexOf(menuitem);
+        // gets the next menuitem, wraps around from last back to first
         const next = () => {
             i = (i + 1) % menuitems.length;
             return menuitems[i];
@@ -149,6 +165,11 @@
      */
     function pointerActivation(e) {
         let menuitem = e.target;
+        if (!isMenuitem(menuitem)) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
 
         // we handle menuitems that open submenus separately
         if (!('controller' in menuitem.dataset)) activateFunction(menuitem);
@@ -174,7 +195,7 @@
     /**
      * Closes all menus when focus moves outside of the widget.
      * @param {FocusoutEvent} e the focusout event
-     */
+     *
     function closeAllMenus(menu) {
         let widget = menu.closest('[data-menu-widget]')
         menu = widget.querySelector('[role="menu"]');
@@ -182,7 +203,21 @@
         // focusTarget the other eventlisteners should be dealing with focus 
         // management. if the menu is hidden, then we do not want to open it.
         // if (widget.contains(focusTarget) || menu.hidden) return;
-        console.log('closing all menus');
+        toggleMenu(menu, false);
+    }
+
+    /**
+     * Closes all menus when focus moves outside of the widget.
+     * @param {FocusoutEvent} e the focusout event
+     */
+    function closeAllMenus(e) {
+        let widget = e.currentTarget;
+        let focusTarget = e.relatedTarget;
+        let menu = widget.querySelector('[role="menu"]');
+        // called on focusout which bubbles up, so if the widget contains the 
+        // focusTarget the other eventlisteners should be dealing with focus 
+        // management. if the menu is hidden, then we do not want to open it.
+        if (widget.contains(focusTarget) || menu.hidden) return;
         toggleMenu(menu, false);
     }
 
@@ -277,9 +312,9 @@
      */
     function positionMenu(menu) {
         let controller = getControllerOfMenu(menu);
-        let ancestor = controller.closest('[data-menu-widget]');
-        if (!ancestor) {
-            console.warn("can't position submenu, ancestor not found!");
+        let widget = controller.closest('[data-menu-widget]').querySelector('[data-controller]');
+        if (!widget) {
+            console.warn("can't position submenu, widget not found!");
             return;
         }
         // reset the styling
@@ -288,18 +323,19 @@
         menu.style.removeProperty('white-space');
         // get menu dimensions
         let menuRect = menu.getBoundingClientRect();
-        let ancestorRect = ancestor.getBoundingClientRect();
+        let widgetRect = widget.getBoundingClientRect();
         let controllerRect = controller.getBoundingClientRect();
 
+        
         // this positions the new menu directly below the controlling menuitem/button
-        let zeroY = controllerRect.y - ancestorRect.y + controllerRect.height;
+        let zeroY = controllerRect.y - widgetRect.y + controllerRect.height;
+        let zeroX = widgetRect.x - controllerRect.x;
         menu.style.top = zeroY + 'px';
+        menu.style.left = 0 + 'px';
+        
         // set the width of submenus equal to parent
-        if (menuRect.width < controllerRect.width) {
-            let borderWidth =
-                getPropertyAsNumber(menu, 'border-left-width')
-                + getPropertyAsNumber(menu, 'border-right-width');
-            menu.style.width = controllerRect.width + borderWidth + 'px';
+        if (menuRect.width < widgetRect.width) {
+            menu.style.width = widgetRect.width + 'px';
         }
         // we may have changed to size, so we want to updated the rect
         // so that we can ensure that it is fully within the viewport
@@ -311,8 +347,9 @@
         // when used on the html element
         let vw = document.documentElement.clientWidth;
         if (menuRect.width > vw) {
-            let widthOffset = vw;
+            let widthOffset = vw - getPropertyAsNumber(menu, 'padding-left');
             let leftOffset = (-1 * menuRect.x);
+            leftOffset -= getPropertyAsNumber(menu, 'padding-left');
             menu.style.width = widthOffset + 'px';
             menu.style.left = leftOffset + 'px';
             // in the style sheet we've set the "white-space" CSS property
@@ -331,8 +368,10 @@
      * @param {Event} e e.target
      */
     function activateFunction(menuitem) {
+        console.log('activating fucntion:', menuitem);
         if ('controller' in menuitem.dataset) {
             // clicking a menu controller toggles the associated menu
+            console.log('clicking', menuitem);
             menuitem.click();
             return;
         }
@@ -344,15 +383,16 @@
 
     /**
      * Closes the menu and all parent menus. Calls
-     * the toggleMenu() function which handles focus.
+     * the toggleMenu() function. To prevent focusout event from occuring,
+     * we do not want toggleMenu to handle focus.
      * @param {HTMLElement} menu [role="menu"] element
      */
     function fullyCloseMenu(menu) {
-        while (menu) {
-            toggleMenu(menu);
-            let controller = getControllerOfMenu(menu);
-            menu = controller.closest('[role="menu"]');
-        }
+        let widget = menu.closest('[data-menu-widget]');
+        // find root menu
+        let rootMenu = widget.querySelector('[role="menu"]');
+        toggleMenu(rootMenu, false);
+        getControllerOfMenu(rootMenu).focus();
     }
 
     /* Simple Functions */

@@ -18,17 +18,17 @@
         <!-- instructions -->
         <p id="instructions">
             Keyboard usage:
-        <ul>
-            <li>Arrow Right: opens submenu if the menu item controls a submenu.</li>
-            <li>Arrow Left, Escape: closes the current submenu and places focus on the related controller.</li>
-            <li>Arrow Down/Up: move focus within the menu.</li>
-            <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
-            <li>Home: move focus to the first menuitem.</li>
-            <li>End: move focus to the last menuitem.</li>
-            <li>letter (a-Z): moves focus to the next menuitem that starts with the letter. Wraps around.</li>
-            <li>Shift+Tab: closes current menu and returns focus onto the menu's controller.</li>
-            <li>Tab: closes all menus and moves focus to the next component on the page.</li>
-        </ul>
+            <ul>
+                <li>Arrow Right: opens submenu if the menu item controls a submenu.</li>
+                <li>Arrow Left, Escape: closes the current submenu and places focus on the related controller.</li>
+                <li>Arrow Down/Up: move focus within the menu.</li>
+                <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
+                <li>Home: move focus to the first menuitem.</li>
+                <li>End: move focus to the last menuitem.</li>
+                <li>letter (a-Z): moves focus to the next menuitem that starts with the letter. Wraps around.</li>
+                <li>Shift+Tab: closes current menu and returns focus onto the menu's controller.</li>
+                <li>Tab: closes all menus and moves focus to the next component on the page.</li>
+            </ul>
         </p>
         <!-- 
                 AT = Assistive Technology
@@ -41,8 +41,8 @@
                     focus remains on the element with role="menu". This element's 
                     aria-activedescendant attribute indicates which menuitem in 
                     this menu currently has focus. AT will be notified when this 
-                    attribute is changed and will, as a result, notify users of 
-                    the change in focus.
+                    attribute is changed and will notify users of the change in focus.
+                    
                     For sedentary focus management we make a distinction between
                     two different types of focus:
                         - DOM focus: the element the browser (or DOM) is focusing.
@@ -95,6 +95,10 @@
                             cursor. We always recommend giving an accessible name
                             to an element with an interactive role - the MENU role
                             is considered interactive.
+                    - (NECESSARY) aria-activedescendant:
+                            indicates to AT the owned element that effectively has
+                            focus.
+                    - 
              -->
 
 
@@ -106,15 +110,15 @@
                 aria-haspopup="menu"
                 aria-controls="menu-example-sedentary-focus" 
                 data-controller>
-                Edit text properties
+                Edit text properties (sedentary)
             </button>
             <!-- 
-                    we set tabindex=0 on the [role="menu"] components so that it can receive focus. 
-                    This differs from the roving focus version where the menuitems in the menu
-                    receive focus instead.
-                    We also hide the menu using the hidden attribute. This hides the content visually
-                    as well as from assistive technology.
-                -->
+                we set tabindex=0 on the [role="menu"] components so that it can receive focus. 
+                This differs from the roving focus version where the menuitems in the menu
+                receive focus instead.
+                We also hide the menu using the hidden attribute. This hides the content visually
+                as well as from assistive technology.
+            -->
             <ul id="menu-example-sedentary-focus" 
                 tabindex="0" 
                 role="menu" 
@@ -132,6 +136,7 @@
                     aria-controls="example-sedentary-submenu" 
                     data-controller>
                     Text transformations
+                    <span class="arrow" aria-hidden="true"></span>
                 </li>
                 <li id="sed-a5" role="menuitem">Copy text</li>
                 <li id="sed-a6" role="menuitem">Hide text</li>
@@ -151,6 +156,7 @@
                     aria-controls="two-example-sub-submenu" 
                     data-controller>
                     Text effects
+                    <span class="arrow" aria-hidden="true"></span>
                 </li>
             </ul>
             <ul id="two-example-sub-submenu" 
@@ -167,7 +173,9 @@
         <!-- end menu -->
         <!-- extra text to so that we can test ensuring that items receiving focus are 
         visible while focused - when using ARIA-ACTIVEDESCENDANT there is a possibility that
-        content in focus will be offscreen. -->
+        content in focus will be offscreen. Since we capture arrow key presses and prevent
+        the default, we need to make sure that if an item receives focus, it is not offscreen as
+        keyboard users will not be able to scroll the viewport without closing the menu. -->
         <p>
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque quas non est et. Possimus consequatur,
             repudiandae id mollitia, voluptatem aliquam necessitatibus et veritatis tenetur eius in quibusdam? Aperiam,
