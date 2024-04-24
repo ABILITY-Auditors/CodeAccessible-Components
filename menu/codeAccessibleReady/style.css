@@ -5,11 +5,6 @@
     --hover-dark-color: rgb(68, 68, 94);
 }
 
-.example {
-    margin: 0;
-    padding: 0;
-}
-
 /* we remove the default outline as the menuitems 
    in focus are given their own custom focus indicator */
 [role="menu"] {
@@ -65,13 +60,13 @@
 }
 
 [data-menu-widget] {
-    margin: 0;
+    margin: 1rem 0;
     padding: 0;
     position: relative;
 }
 
 [role="menu"]:focus [role="menuitem"].active {
-    background-color: var(--focus-color);
+    background-color: #222;
     color: white;
 }
 
@@ -106,6 +101,37 @@ button[data-controller]:focus {
 
 [data-controller][aria-expanded="true"] .arrow::before {
     content: '.v';
+}
+
+[role="menuitem"],
+[role="menu"] [data-controller] {
+    cursor: pointer;
+    padding: 0.25rem;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* We remove the default focus indicator as we indicate focus 
+    by setting the bg color to black and the text color to white. */
+[role="menuitem"] {
+    outline: none;
+}
+
+[role="menu"] [role="menuitem"]:focus:not(:hover) {
+    background-color: #222;
+    color: white;
+}
+
+[role="menuitem"]:focus {
+    background-color: #222;
+    color: white;
+}
+
+[role="menuitem"]:focus:hover {
+    background-color: var(--hover-color);
+    color: black;
 }
 
 kbd {

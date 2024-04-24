@@ -18,15 +18,15 @@
             <p id="instructions">
                 Keyboard usage:
                 <ul>
-                    <li>Arrow Right: opens submenu if the menu item controls a submenu.</li>
-                    <li>Arrow Left, Escape: closes the current submenu and places focus on the related controller.</li>
-                    <li>Arrow Down/Up: move focus within the menu.</li>
-                    <li>Enter: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
-                    <li>Home: move focus to the first menuitem.</li>
-                    <li>End: move focus to the last menuitem.</li>
-                    <li>letter (a-Z): moves focus to the next menuitem that starts with the letter. Wraps around.</li>
-                    <li>Shift+Tab: closes current menu and returns focus onto the menu's controller.</li>
-                    <li>Tab: closes all menus and moves focus to the next component on the page.</li>
+                    <li><kbd>Arrow Right</kbd>: opens submenu if the menu item controls a submenu.</li>
+                    <li><kbd>Arrow Left</kbd>, <kbd>Escape</kbd>: closes the current submenu and places focus on the related controller.</li>
+                    <li><kbd>Arrow Down/Up</kbd>: move focus within the menu.</li>
+                    <li><kbd>Enter</kbd>: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
+                    <li><kbd>Home</kbd>: move focus to the first menuitem.</li>
+                    <li><kbd>End</kbd>: move focus to the last menuitem.</li>
+                    <li><kbd>letter (a-Z)</kbd>: moves focus to the next menuitem that starts with the letter. Wraps around.</li>
+                    <li><kbd>Shift+Tab</kbd>: closes current menu and returns focus onto the menu's controller.</li>
+                    <li><kbd>Tab</kbd>: closes all menus and moves focus to the next component on the page.</li>
                 </ul>
             </p>
             <!-- 
@@ -102,12 +102,11 @@
                     aria-haspopup="menu"
                     aria-controls="menu-example-roving-focus"
                     data-controller>
-                    Edit text properties (roving)
+                    (roving) Edit text properties
                 </button>
                 <ul id="menu-example-roving-focus" 
                     role="menu" 
                     aria-labelledby="menu-opener-roving-focus" 
-                    data-type="roving"
                     data-reset-focus
                     hidden>
                     <li id="rov-a0" role="menuitem" tabindex="0">Increase opacity</li>
@@ -120,7 +119,9 @@
                         aria-controls="example-submenu" 
                         data-controller>
                         Text transformations
-                        <!-- this span has no pointer events  -->
+                        <!-- this span.arrow informs sighted user of submenu
+                             ARIA-HASPOPUP=MENU informs AT of submenu
+                             so we hide the span.arrow from AT -->
                         <span class="arrow" aria-hidden="true"></span>
                     </li>
                     <li id="rov-a5" role="menuitem" tabindex="-1">Copy text</li>
@@ -130,7 +131,6 @@
                 <ul id="example-submenu" 
                     role="menu" 
                     aria-labelledby="rov-a4"
-                    data-type="roving"
                     hidden>
                     <li id="rov-b0" role="menuitem" tabindex="0">Skew text</li>
                     <li id="rov-b1" role="menuitem" tabindex="-1">Strikethrough text</li>
@@ -148,9 +148,9 @@
                 <ul id="example-sub-submenu" 
                     role="menu"  
                     aria-labelledby="rov-b3"
-                    data-type="roving"
+                    data-reset-focus
                     hidden>
-                    <li id="rov-c0" role="menuitem" tabindex="0">Add dropshadow</li>
+                    <li id="rov-c0" role="menuitem" tabindex="0">Add dropshadow and then a whole lot of extra stuff that isn't necesary.</li>
                     <li id="rov-c1" role="menuitem" tabindex="-1">Add text outline</li>
                     <li id="rov-c2" role="menuitem" tabindex="-1">Add text glow</li>
                 </ul>

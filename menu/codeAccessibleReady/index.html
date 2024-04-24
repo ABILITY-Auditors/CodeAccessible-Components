@@ -1,0 +1,208 @@
+
+<!-- Copy everything into codeaccessible demo area -->
+<p id="instructions">
+    Keyboard usage:
+    <ul>
+        <li><kbd>Arrow Right</kbd>: opens submenu if the menu item controls a submenu.</li>
+        <li><kbd>Arrow Left</kbd>, <kbd>Escape</kbd>: closes the current submenu and places focus on the related controller.</li>
+        <li><kbd>Arrow Down/Up</kbd>: move focus within the menu.</li>
+        <li><kbd>Enter</kbd>: activates the menu item. If the menu item opens a submenu, the submenu will be opened and focus will be placed in the submenu. Otherwise activates the related menu item's function.</li>
+        <li><kbd>Home</kbd>: move focus to the first menuitem.</li>
+        <li><kbd>End</kbd>: move focus to the last menuitem.</li>
+        <li><kbd>letter (a-Z)</kbd>: moves focus to the next menuitem that starts with the letter. Wraps around.</li>
+        <li><kbd>Shift+Tab</kbd>: closes current menu and returns focus onto the menu's controller.</li>
+        <li><kbd>Tab</kbd>: closes all menus and moves focus to the next component on the page.</li>
+    </ul>
+</p>
+<!-- 
+    AT = Assistive Technology
+    SR = Screen Reader
+    Roving vs Sedentary focus management:
+    - Roving focus management: 
+        individual menuitems in a menu each receive focus. 
+    - Sedentary focus management: 
+        focus remains on the element with role="menu". This element's 
+        aria-activedescendant attribute indicates which menuitem in 
+        this menu currently has focus. AT will be notified when this 
+        attribute is changed and will, as a result, notify users of 
+        the change in focus.
+        For sedentary focus management we make a distinction between
+        two different types of focus:
+            - browser focus: the element the browser is focusing.
+                document.activeElement should give you the element
+                that currently has browser focus
+            - programmatic focus: the element that assistive technologies
+                understand to have focus. This focus is only used in
+                sedentary focus management style, where browser focus
+                remains on an element with a widget role such as MENU,
+                and the attribute ARIA-ACTIVEDESCENDANT indicates to
+                assistive technolgies which element currently has
+                programmatic focus. When programmatic focus changes
+                (i.e. ARIA-ACTIVEDESCENDANT changes) AT will typically
+                act the same way as if browser focus had changed.
+    Relevant Attribtues:
+        button#menu-opener-sedentary-focus:
+        - (NECESSARY) aria-expanded: 
+                ensures that the expanded state of this button 
+                is programmatically determinable.
+        - (OPTIONAL ) aria-haspopup: 
+                allows AT to notify users that this component, 
+                when activated, will open a component with a 
+                ROLE of MENU. Experienced users may expect and 
+                understand how to interact with this type of 
+                component, specifically that keyboard navigation 
+                is primarily with the arrow keys.
+        - (OPTIONAL ) aria-controls:
+                indicates to AT that this component controls the
+                element with this id. Typically only useful for
+                JAWS
+        Note: 
+            This button element is not considered part of the 
+            composite menu widget. It merely controls the 
+            presence of the composite menu widget.
+        
+        ul#menu-example-roving-focus:
+        - (NECESSARY) role="menu":
+                this ensures that this element has the proper role.
+                Assistive technology may behave differently depending
+                on the role of an element. With interactive widgets
+                like a menu, AT will also notify users of the role
+                so that they understand how to interact with it.
+        - (NECESSARY) aria-labelledby:
+                provides an accessible name to the menu. NVDA does not
+                expose this name when navigating using browser focus,
+                but it IS exposed when navigating using the virtual
+                cursor. We always recommend giving an accessible name
+                to an element with an interactive role - the MENU role
+                is considered interactive.
+ -->
+<!-- ROVING FOCUS MANAGEMENT EXAMPLE -->
+<h2>Roving Focus Menu Example</h2>
+<div data-menu-widget="roving">
+    <button id="menu-opener-roving-focus" 
+        aria-expanded="false"
+        aria-haspopup="menu"
+        aria-controls="menu-example-roving-focus"
+        data-controller>
+        (roving) Edit text properties 
+    </button>
+    <ul id="menu-example-roving-focus" 
+        role="menu" 
+        aria-labelledby="menu-opener-roving-focus" 
+        data-reset-focus
+        hidden>
+        <li id="rov-a0" role="menuitem" tabindex="0">Increase opacity</li>
+        <li id="rov-a1" role="menuitem" tabindex="-1">Decrease opacity</li>
+        <li id="rov-a2" role="menuitem" tabindex="-1">Increase text size</li>
+        <li id="rov-a3" role="menuitem" tabindex="-1">Decrease text size</li>
+        <li id="rov-a4" role="menuitem" tabindex="-1"
+            aria-expanded="false" 
+            aria-haspopup="menu"
+            aria-controls="example-submenu" 
+            data-controller>
+            Text transformations
+            <!-- this span.arrow informs sighted user of submenu
+                 ARIA-HASPOPUP=MENU informs AT of submenu
+                 so we hide the span.arrow from AT -->
+            <span class="arrow" aria-hidden="true"></span>
+        </li>
+        <li id="rov-a5" role="menuitem" tabindex="-1">Copy text</li>
+        <li id="rov-a6" role="menuitem" tabindex="-1">Hide text</li>
+    </ul>
+    <!-- first-level submenu -->
+    <ul id="example-submenu" 
+        role="menu" 
+        aria-labelledby="rov-a4"
+        hidden>
+        <li id="rov-b0" role="menuitem" tabindex="0">Skew text</li>
+        <li id="rov-b1" role="menuitem" tabindex="-1">Strikethrough text</li>
+        <li id="rov-b2" role="menuitem" tabindex="-1">Underline text</li>
+        <li id="rov-b3" role="menuitem" tabindex="-1"
+            aria-expanded="false" 
+            aria-haspopup="menu"
+            aria-controls="example-sub-submenu" 
+            data-controller>
+            Text effects
+            <span class="arrow" aria-hidden="true"></span>
+        </li>
+    </ul>
+    <!-- second-level submenu -->
+    <ul id="example-sub-submenu" 
+        role="menu"  
+        aria-labelledby="rov-b3"
+        data-reset-focus
+        hidden>
+        <li id="rov-c0" role="menuitem" tabindex="0">Add dropshadow and then a whole lot of extra stuff that isn't necesary.</li>
+        <li id="rov-c1" role="menuitem" tabindex="-1">Add text outline</li>
+        <li id="rov-c2" role="menuitem" tabindex="-1">Add text glow</li>
+    </ul>
+</div>
+<!-- end menu -->
+<!-- SEDENTARY FOCUS MANAGEMENT EXAMPLE -->
+<div data-menu-widget="sedentary">
+    <button id="menu-opener-sedentary-focus" 
+        aria-expanded="false" 
+        aria-haspopup="menu"
+        aria-controls="menu-example-sedentary-focus" 
+        data-controller>
+        (sedentary) Edit text properties
+    </button>
+    <!-- 
+        we set tabindex=0 on the [role="menu"] components so that it can receive focus. 
+        This differs from the roving focus version where the menuitems in the menu
+        receive focus instead.
+        We also hide the menu using the hidden attribute. This hides the content visually
+        as well as from assistive technology.
+    -->
+    <ul id="menu-example-sedentary-focus" 
+        tabindex="0" 
+        role="menu" 
+        aria-labelledby="menu-opener-sedentary-focus"
+        aria-activedescendant="sed-a0"
+        data-reset-focus 
+        hidden>
+        <li id="sed-a0" role="menuitem">Increase opacity</li>
+        <li id="sed-a1" role="menuitem">Decrease opacity</li>
+        <li id="sed-a2" role="menuitem">Increase text size</li>
+        <li id="sed-a3" role="menuitem">Decrease text size</li>
+        <li id="sed-a4" role="menuitem" 
+            aria-expanded="false" 
+            aria-haspopup="menu"
+            aria-controls="example-sedentary-submenu" 
+            data-controller>
+            Text transformations
+            <span class="arrow" aria-hidden="true"></span>
+        </li>
+        <li id="sed-a5" role="menuitem">Copy text</li>
+        <li id="sed-a6" role="menuitem">Hide text</li>
+    </ul>
+    <ul id="example-sedentary-submenu" 
+        tabindex="0" 
+        role="menu" 
+        aria-labelledby="sed-a4"
+        aria-activedescendant="sed-b0"
+        hidden>
+        <li id="sed-b0" role="menuitem">Skew text and then a whole lot of extra stuff that isn't necesary.</li>
+        <li id="sed-b1" role="menuitem">Reverse text</li>
+        <li id="sed-b2" role="menuitem">Scramble text</li>
+        <li id="sed-b3" role="menuitem" 
+            aria-expanded="false" 
+            aria-haspopup="menu"
+            aria-controls="two-example-sub-submenu" 
+            data-controller>
+            Text effects
+            <span class="arrow" aria-hidden="true"></span>
+        </li>
+    </ul>
+    <ul id="two-example-sub-submenu" 
+        tabindex="0" 
+        role="menu" 
+        aria-labelledby="sed-b3"
+        aria-activedescendant="sed-c0"
+        hidden>
+        <li id="sed-c0" role="menuitem">Add dropshadow and then a whole lot of extra stuff that isn't necesary.</li>
+        <li id="sed-c1" role="menuitem">Add text outline</li>
+        <li id="sed-c2" role="menuitem">Add text glow</li>
+    </ul>
+</div>
+<!-- end menu -->

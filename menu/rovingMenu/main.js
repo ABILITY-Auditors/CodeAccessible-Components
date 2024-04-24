@@ -17,6 +17,7 @@
             // (e.g. element to be focused) is not inside the menu
             menuWidget.addEventListener('focusout', closeAllMenus);
 
+            // resize and position all open menus within the menu widget
             window.addEventListener('resize', (e) => {
                 let menus = menuWidget.querySelectorAll('[role="menu"]:not([hidden])');
                 for(let menu of menus) {
@@ -48,10 +49,6 @@
         // iterate over all menuitems and add dataset.next and dataset.previous
         for (let i = 0; i < menuitems.length; i++) {
             let menuitem = menuitems[i];
-            // if this opens a submenu
-            if ('controller' in menuitem.dataset) {
-                menuitem.setAttribute('role', 'menuitem');
-            }
             // handle first/last
             let nextIndex = i + 1 >= menuitems.length ? 0 : i + 1;
             let prevIndex = i <= 0 ? menuitems.length - 1 : i - 1;
@@ -143,10 +140,8 @@
      * @returns HTMLElement<role=menuitem> if a match is found. null if no match is found.
      */
     function matchMenuitemFromLetter(menu, menuitem, letter) {
-        let menuitems;
-        let i;
-        menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
-        i = menuitems.indexOf(menuitem);
+        let menuitems = [...menu.querySelectorAll('[role="menuitem"]')];
+        let i = menuitems.indexOf(menuitem);
         const next = () => {
             i = (i + 1) % menuitems.length;
             return menuitems[i];
@@ -169,7 +164,6 @@
      */
     function activateFunction(e) {
         let menuitem = e.target;
-        console.log('activating: ', menuitem);
         if ('controller' in menuitem.dataset ) {
             return;
         }
@@ -192,7 +186,6 @@
     function controllerActivation(e) {
         let controller = e.currentTarget;
         let menu = getControlledMenu(controller);
-        console.log('activating controller', menu, e.currentTarget);
         if (!menu) {
             throw new Error('malformed menu, could not find menu from controller', controller);
         }
@@ -213,7 +206,6 @@
         // management. if the menu is hidden, then we do not want to open it.
         
         if (widget.contains(focusTarget) || menu.hidden) return;
-        console.log('closing all menus', focusTarget, menu)
         toggleMenu(menu, false);
     }
 
@@ -269,17 +261,17 @@
         // get menu dimensions
         let menuRect = menu.getBoundingClientRect();
         let widgetRect = widget.getBoundingClientRect();
-        let menuControllerRect = controllersMenu.getBoundingClientRect();
+        let controllersMenuRect = controllersMenu.getBoundingClientRect();
         let controllerRect = controller.getBoundingClientRect();
 
         
         // this positions the new menu directly below the controlling menuitem/button
         let zeroY = controllerRect.y - widgetRect.y + controllerRect.height;
-        menu.style.top = zeroY + 'px';
+        menu.style.top = zeroY + 2 + 'px';
         
         // set the width of submenus equal to parent
-        if (menuRect.width < menuControllerRect.width) {
-            menu.style.width = menuControllerRect.width + 'px';
+        if (menuRect.width < controllersMenuRect.width) {
+            menu.style.width = controllersMenuRect.width + 'px';
         }
         // we may have changed to size, so we want to updated the rect
         // so that we can ensure that it is fully within the viewport
@@ -290,19 +282,25 @@
         // clientWidth will include everything but the vertical scrollbar
         // when used on the html element
         let vw = document.documentElement.clientWidth;
-        if (menuRect.width > vw) {
-            let widthOffset = vw - getPropertyAsNumber(menu, 'padding-left');
-            let leftOffset = (-1 * menuRect.x);
+        if (menuRect.width > vw || menuRect.x + menuRect.width > vw) {
+            let widthOffset, leftOffset;
+            if (isMenuitem(controller)) {
+                // submenus
+                widthOffset = controllersMenuRect.width;
+                leftOffset = -1 * Math.abs(controllersMenuRect.x - widgetRect.x);
+            }
+            else {
+                // first level menu
+                let twoPercentVW = (2 * (vw / 100));
+                widthOffset = vw - 2 * twoPercentVW;
+                leftOffset = twoPercentVW - controllersMenuRect.x;
+            }
             menu.style.width = widthOffset + 'px';
             menu.style.left = leftOffset + 'px';
             // in the style sheet we've set the "white-space" CSS property
             // to nowrap, but when the text is longer than the width of the
             // viewport, we need to wrap the text
             menu.style.whiteSpace = 'normal';
-        }
-        else if (menuRect.x + menuRect.width > vw) {
-            let leftOffset = vw - (menuRect.x + menuRect.width);
-            menu.style.left = leftOffset + 'px';
         }
     }
 
@@ -346,17 +344,11 @@
     }
 
     /**
-     * Gets the value of a CSS property for an element as a number. 
-     * @param {HTMLElement} element gets the CSS property of this element
-     * @param {String} property the CSS property name
-     * @returns the CSS property's value as a Number (note CSS values are typically in pixels)
+     * Checks if an element is a menuitem.
+     * @param {HTMLElement} element the html element to check
+     * @returns Boolean
      */
-    function getPropertyAsNumber(element, property) {
-        return Number(
-            window
-                .getComputedStyle(element)
-                .getPropertyValue(property)
-                .match(/\d+(\.\d+)?/gi)
-        );
+    function isMenuitem(element) {
+        return element.hasAttribute('role') && element.getAttribute('role') === 'menuitem';
     }
 })();
