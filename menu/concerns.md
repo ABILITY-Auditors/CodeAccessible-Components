@@ -8,7 +8,6 @@
    - [Focus Indicator](#focus-indicator)
    - [Complexity](#complexity)
    - [Focus Management](#focus-management)
-   - [Focus Indicator](#focus-indicator)
    - [Reflow](#reflow)
    - [Obscuring Content](#obscuring-content)
    - [Nested Menus](#nested-menus)
@@ -27,7 +26,7 @@ be supported, such as the Right Arrow key opening a submenu if focus is currentl
 menuitem that opens a submenu, or the Home/End keys moving focus to the first/last item in a menu.
 The ARIA specification itself demands authors handle focus themselves.
 
-Overall we typically recommend using a disclosure widget (the native HTML equivalent of a disclosure widget is the `[details and summary](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details)` HTML elements) unless there is a good reason to use an ARIA menu widget.
+Overall we typically recommend using a disclosure widget (the native HTML equivalent of a disclosure widget is the [details and summary](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) HTML elements) unless there is a good reason to use an ARIA menu widget.
 
 ## <a id="keyboard-interactions">ARIA Menu Widget Keyboard Interactions</a>
 
@@ -58,9 +57,9 @@ Overall we typically recommend using a disclosure widget (the native HTML equiva
 
 ### <a id="focus-management">Focus Management</a>
 
-1. **Concern:** Menu roles expect authors (web developers) to manage focus. Screen readers typically capture most keystrokes (some exceptions include Tab and Shift+Tab) and do not relay these keystrokes to the browser. However, when an element with a complex widget role such as MENU is focused, screen readers will no longer capture most keystrokes as it expects authors to handle certain keyboard interactions. For example, an element with a MENU role expects users to navigate between descendant menuitems using arrow keys. However screen readers often capture arrow key presses which are used to move the [**virtual cursor (read more here)**](https://support.microsoft.com/en-us/office/use-microsoft-teams-with-the-jaws-virtual-cursor-79a8b669-c95b-4a6c-a2fa-c3d6dbb1b9c3#bkmk_whatwhy) in the DOM and read its contents to the user. So when a screen reader encounters an element with a role of MENU it will no longer capture the arrow keys and assumes the content author (web developer) has implemented a way to manage focus using these arrow keys. If arrow keys are not used to manage focus, this may cause confusion for screen reader users. More experienced users are likely to assume that they can move focus using arrow keys and find it frustrating if they can’t. For inexperienced users, they may not realize that they are not able to use their virtual cursor while interacting with a MENU, and when there is no response to arrow key presses they may think that the web application is broken.
+1. **Concern:** Menu roles expect authors (web developers) to manage focus. Screen readers typically capture most keystrokes (some exceptions include Tab and Shift+Tab) and do not relay these keystrokes to the browser. For example, screen readers capture arrow key presses which are used to move the [**virtual cursor (read more here)**](https://support.microsoft.com/en-us/office/use-microsoft-teams-with-the-jaws-virtual-cursor-79a8b669-c95b-4a6c-a2fa-c3d6dbb1b9c3#bkmk_whatwhy) in the DOM and read its contents to the user. However, when a screen reader encounters an element with a complex widget role of MENU, it will no longer capture the arrow keys and assumes the content author (web developer) has implemented a way to manage focus using these arrow keys. If arrow keys are not used to manage focus, this may cause confusion for screen reader users. More experienced users are likely to assume that they can move focus using arrow keys and find it frustrating if they can’t. For inexperienced users, they may not realize that they are not able to use their virtual cursor while interacting with a MENU, and when there is no response to arrow key presses they may think that the web application is broken.
 
-2. **Mitigation:** Ensure that the menu manages focus. We recommend ensuring that arrow keys can be used to move focus as this is the expected behavior. Focus should either be managed using a 1) Sedentary Focus Management style, or a 2) Roving Focus Management style. To ensure that screen readers act appropriately, DOM focus should either 1) (Sedentary Focus Management) remain on a `role=menu` element and use the `ARIA-ACTIVEDESCENDANT` attribute to indicate the descendant menuitem that is in focus or 2) (Roving Focus Management) be placed on a `role=menuitem` element that is in focus.
+2. **Mitigation:** Ensure that the menu manages focus. We recommend ensuring that arrow keys can be used to move focus as this is the expected behavior. Focus should either be managed using a 1) Sedentary Focus Management style, or a 2) Roving Focus Management style. To ensure that screen readers act appropriately, either 1) (Sedentary Focus Management) ensure DOM focus remain on a `role=menu` element and use the `ARIA-ACTIVEDESCENDANT` attribute to indicate the descendant menuitem that is in focus or 2) (Roving Focus Management) ensure DOM focus is placed on a `role=menuitem` element.
 
 ## <a id="reflow">Reflow</a>
 
@@ -71,16 +70,16 @@ Overall we typically recommend using a disclosure widget (the native HTML equiva
 
 ## <a id="obscuring-content">Obscuring Content</a>
 
-1. **Concern:** Menu widgets may be position absolution using CSS. When this happens there is a chance that the menu obscures other content on the page. If users move focus away from the menu, and it remains open, keyboard users may miss or have a difficult time using this obscured content.
+1. **Concern:** Menu widgets may be position absolution using CSS. When this happens there is a chance that the menu obscures other content on the page. If users move focus away from the menu, and it remains open, keyboard users may miss or have a difficult time using content obscured by the open menu.
 
 2. **Mitigation:** We recommend collapsing the menu widget when focus is moved away from it. In our example 1) we collapse the entire menu when focus is moved forward and outside the menu, and 2) we collapse submenus when focus is moved backwards onto an ancestor menu.
 
 
 ## <a id="nested-menus">Nested Menus</a>
 
-1. **Concern:** The ARIA specification is a bit ambiguous regarding whether it allows menus nested in other menus (in the DOM). While we have not encountered an issue with implementations that have nested menus, we do not recommend nesting menus inside other menus as we interpret the specification as disallowing nested menus; User Agents (browsers, screen readers) may not support nested menus in the future.
+1. **Concern:** We interpret the ARIA specification as disallowing nested menus, however the language used in the current ARIA spec is a bit ambiguous regarding nested menus. While we have not encountered an issue with implementations that have nested menus, we do not recommend nesting menus inside other menus. User Agents (browsers, screen readers) may not support nested menus in the future.
 
-2. **Mitigation:** Ensure that elements with a role of MENU do not have a descendant element with the same role.
+2. **Mitigation:** Ensure that elements with a role of MENU do not have a descendant element with the same role. Ensure that elements with a role of MENU only contain: `menuitem`, `menuitemradio`, `menuitemcheckbox`, or named `group`s containing one or more of these roles.
 
 
 ## <a id="alternate-menuitems">Alternate Menuitem Roles: Menuitemradio and Menuitemcheckbox</a>
