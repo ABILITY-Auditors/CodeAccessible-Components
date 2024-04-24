@@ -1,0 +1,147 @@
+:root {
+    --br: max(0.15rem, 2px);
+    --focus-color: #222;
+    --hover-color: rgb(199, 200, 247);
+    --hover-dark-color: rgb(68, 68, 94);
+}
+
+/* we remove the default outline as the menuitems 
+   in focus are given their own custom focus indicator */
+[role="menu"] {
+    outline: none;
+}
+
+[role="menu"] [data-controller] {
+    border: none;
+    background: transparent;
+}
+
+[role="menu"],
+[role="menu"] * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+}
+
+[role="menu"] {
+    position: absolute;
+    z-index: 1;
+
+    box-shadow: 0px 4px 5px -2px black;
+    border: max(1px, 0.15rem) solid black;
+    list-style: none;
+    white-space: nowrap;
+    padding: var(--br);
+    border-radius: calc(2 * var(--br));
+}
+
+[role="menu"] [role="menu"] {
+    top: 0;
+}
+
+[role="menuitem"],
+[role="menu"] [data-controller] {
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: var(--br);
+    border: 2px solid transparent;
+}
+
+[role="menuitem"]:hover,
+[role="menu"] [data-controller]:hover {
+    border-color: var(--hover-dark-color);
+    background-color: var(--hover-color);
+    color: black;
+}
+
+[data-menu-widget] {
+    margin: 1rem 0;
+    padding: 0;
+    position: relative;
+}
+
+[role="menu"]:focus [role="menuitem"].active {
+    background-color: #222;
+    color: white;
+}
+
+[role="menu"]:focus [role="menuitem"].active:hover {
+    background-color: var(--hover-color);
+    color: black;
+}
+
+[role="menu"] [role="menuitem"] {
+    position: relative;
+}
+
+button[data-controller]:focus {
+    outline-offset: var(--br);
+    border-color: var(--focus-color);
+    border-radius: var(--br);
+    box-shadow: 1px 1px 3px -1px black;
+    outline: var(--br) solid var(--focus-color);
+}
+
+[data-controller] .arrow {
+    background: transparent;
+    /* important to make sure the javascript works */
+    pointer-events: none;
+}
+
+[data-controller] .arrow::before {
+    content: '->';
+    font-family: 'Courier New', Courier, monospace;
+   
+}
+
+[data-controller][aria-expanded="true"] .arrow::before {
+    content: '.v';
+}
+
+[role="menuitem"],
+[role="menu"] [data-controller] {
+    cursor: pointer;
+    padding: 0.25rem;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* We remove the default focus indicator as we indicate focus 
+    by setting the bg color to black and the text color to white. */
+[role="menuitem"] {
+    outline: none;
+}
+
+[role="menu"] [role="menuitem"]:focus:not(:hover) {
+    background-color: #222;
+    color: white;
+}
+
+[role="menuitem"]:focus {
+    background-color: #222;
+    color: white;
+}
+
+[role="menuitem"]:focus:hover {
+    background-color: var(--hover-color);
+    color: black;
+}
+
+kbd {
+    background-color: #EFEFEF;
+    border-radius: var(--br);
+    padding: 0.15rem;
+    color: rgb(175, 32, 128);
+    border: 1px solid #AAA;
+}
+
+li {
+    margin-bottom: 0.3rem;
+}
