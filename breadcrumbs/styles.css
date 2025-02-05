@@ -1,0 +1,44 @@
+nav.breadcrumb {
+  padding: 0.8em 1em;
+  border: 1px solid hsl(0deg 0% 90%);
+  border-radius: 4px;
+  background: hsl(300deg 14% 97%);
+}
+
+nav.breadcrumb ol {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+nav.breadcrumb li {
+  display: inline;
+}
+
+nav.breadcrumb li + li::before {
+  display: inline-block;
+  margin: 0 0.25em;
+  transform: rotate(15deg); /* comment this out to remove the slash separator */
+  border-right: 0.1em solid currentcolor; /* comment this out to remove the slash separator */
+  height: 0.8em;
+  content: ""; /* add the content or icon you want to use as the breadcrumb separator here. e.g content: "-→" */
+}
+
+nav.breadcrumb [aria-current="page"] {
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+}
+.sr-only {
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important; /* 2 */
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important; /* 3 */
+}
