@@ -20,12 +20,15 @@
              obtains its accessible name from the first element inside
              it, most SRs will omit anouncing the name of the group (as
              it is already going to be announced) and simply announced "group"
+
+             When a DETAILS is opened all other DETAILS with the same NAME are
+             closed. In this example, all DETAILS have the same NAME, so only
+             one can be opened at a time.
         -->
         <details 
             open 
             name="faq"
             aria-labelledby="native-accordion-controller-1"
-            class="accordion-section-wrapper"
         >
             <!-- The <summary> element has an implicit ROLE of BUTTON 
                  it also has an implicit ARIA-EXPANDED value. 
@@ -60,14 +63,11 @@
             </p>
         </details>
 <!-- ACCORDION 2 -->
-        <details name="faq" aria-labelledby="native-accordion-controller-2" class="accordion-section-wrapper" >
-            <summary class="accordion-controller" id="native-accordion-controller-2">
+        <details name="faq" aria-labelledby="native-accordion-controller-2">
+            <summary id="native-accordion-controller-2">
                 Accordion Section Two
             </summary>
-
-            <div class="imageAccordionSection">
-                <h5>This is a plain text section with an image</h5>
-            </div>
+            <h5>This is a plain text section with an image</h5>
             <p>
                 “Now, a staple of the superhero mythology is, there’s the superhero
                 and there’s the alter ego. Batman is actually Bruce Wayne,
@@ -77,8 +77,8 @@
             </p>
         </details>
 <!-- ACCORDION 3 -->
-        <details name="faq" aria-labelledby="native-accordion-controller-3" class="accordion-section-wrapper">
-            <summary class="accordion-controller" id="native-accordion-controller-3">
+        <details name="faq" aria-labelledby="native-accordion-controller-3">
+            <summary id="native-accordion-controller-3">
                 Accordion Section Three
             </summary>
             <h5>This is a form section</h5>
@@ -99,8 +99,8 @@
             </div>
         </details>
 <!-- ACCORDION 4 -->
-        <details name="faq" aria-labelledby="native-accordion-controller-4" class="accordion-section-wrapper">
-            <summary class="accordion-controller" id="native-accordion-controller-4">
+        <details name="faq" aria-labelledby="native-accordion-controller-4">
+            <summary id="native-accordion-controller-4">
                 Accordion Section Four
             </summary>
 

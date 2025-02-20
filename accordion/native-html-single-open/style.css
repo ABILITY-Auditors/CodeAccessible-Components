@@ -71,14 +71,21 @@
     /* handle icon rotation */
 
     details {
+        max-width: 500px;
 
         /* This all effectively recreates the default triangle marker */
         summary {
             /* this removes the marker */
             list-style-type: none;
             display: flex;
-            justify-content: space-between;
+            justify-content: left;
             align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #EEE;
+            }
         }
 
         /* This removes the marker for webkit browsers */
