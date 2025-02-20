@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+<!-- CODE ACCESSIBLE SNIPPET START -->
+    <div id="native-accordion-group">
+<!-- ACCORDION 1 -->
+        <!-- The <details> element has an implicit ROLE of GROUP
+             GROUP roles must have an accessible name,
+             without one they are not exposed by AT. 
+             
+             Note: if the GROUP
+             obtains its accessible name from the first element inside
+             it, most SRs will omit anouncing the name of the group (as
+             it is already going to be announced) and simply announced "group"
+        -->
+        <details 
+            open 
+            name="faq"
+            aria-labelledby="native-accordion-controller-1"
+            class="accordion-section-wrapper"
+        >
+            <!-- The <summary> element has an implicit ROLE of BUTTON 
+                 it also has an implicit ARIA-EXPANDED value. 
+                 
+                 When "open" is present on the <details element,
+                 the <summary> element has an implicit ARIA-EXPANDED
+                 value of TRUE
+                 
+                 When "open" is not present, the value is FALSE
+            -->
+            <summary id="native-accordion-controller-1">
+                Accordion Section One
+            </summary>
+            <!-- This content will be visible or hidden depending on the details "open"
+                 attribute. 
+            -->
+            <h5>This is a plain text section</h5>
+            <p>
+                “When King Lear dies in Act V, do you know what Shakespeare has
+                written? He’s written “He dies.” That’s all, nothing more. No
+                fanfare, no metaphor, no brilliant final words. The culmination of
+                the most influential work of dramatic literature is “He dies.” It
+                takes Shakespeare, a genius, to come up with “He dies.” And yet
+                every time I read those two words, I find myself overwhelmed with
+                dysphoria. And I know it’s only natural to be sad, but not because
+                of the words “He dies,” but because of the life we saw prior to the
+                words. I’ve lived all five of my acts, Mahoney, and I am not asking
+                you to be happy that I must go. I’m only asking that you turn the
+                page, continue reading… and let the next story begin. And if anyone
+                asks what became of me, you relate my life in all its wonder, and
+                end it with a simple and modest “He died.”
+            </p>
+        </details>
+<!-- ACCORDION 2 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-2" class="accordion-section-wrapper" >
+            <summary class="accordion-controller" id="native-accordion-controller-2">
+                Accordion Section Two
+            </summary>
+
+            <div class="imageAccordionSection">
+                <h5>This is a plain text section with an image</h5>
+            </div>
+            <p>
+                “Now, a staple of the superhero mythology is, there’s the superhero
+                and there’s the alter ego. Batman is actually Bruce Wayne,
+                Spider-Man is actually Peter Parker. When that character wakes up in
+                the morning, he’s Peter Parker. He has to put on a costume to become
+                Spider-Man. And it is in that characteristic Superman stands alone.”
+            </p>
+        </details>
+<!-- ACCORDION 3 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-3" class="accordion-section-wrapper">
+            <summary class="accordion-controller" id="native-accordion-controller-3">
+                Accordion Section Three
+            </summary>
+            <h5>This is a form section</h5>
+            <div class="formAccordionSection">
+                <form>
+                    <div>
+                        <label for="search">Search:</label> <input type="text" name="search" id="search"
+                            placeholder="e.g. Apple Pie">
+                    </div>
+                    <div>
+                        <label for="email">Email: </label> <input type="text" name="email" id="email"
+                            placeholder="joe@example.com">
+                    </div>
+                    <div>
+                        <label for="submit"> <input type="submit" name="submit" id="submit"></label>
+                    </div>
+                </form>
+            </div>
+        </details>
+<!-- ACCORDION 4 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-4" class="accordion-section-wrapper">
+            <summary class="accordion-controller" id="native-accordion-controller-4">
+                Accordion Section Four
+            </summary>
+
+                <h5>This is a plain text section</h5>
+                <p>
+                    “When King Lear dies in Act V, do you know what Shakespeare has
+                    written? He’s written “He dies.” That’s all, nothing more. No
+                    fanfare, no metaphor, no brilliant final words. The culmination of
+                    the most influential work of dramatic literature is “He dies.” It
+                    takes Shakespeare, a genius, to come up with “He dies.” And yet
+                    every time I read those two words, I find myself overwhelmed with
+                    dysphoria. And I know it’s only natural to be sad, but not because
+                    of the words “He dies,” but because of the life we saw prior to the
+                    words. I’ve lived all five of my acts, Mahoney, and I am not asking
+                    you to be happy that I must go. I’m only asking that you turn the
+                    page, continue reading… and let the next story begin. And if anyone
+                    asks what became of me, you relate my life in all its wonder, and
+                    end it with a simple and modest “He died.”
+                </p>
+        </details>
+    </div>
+<!-- CODE ACCESSIBLE SNIPPET END -->
+</body>
+
+</html>

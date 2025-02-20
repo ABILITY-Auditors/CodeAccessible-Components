@@ -1,0 +1,1 @@
+// no JavaScript needed for the native HTML version, browser handles everything.
