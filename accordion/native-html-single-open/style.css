@@ -1,18 +1,5 @@
 #snh-accordion-group {
     details {
-        /* visual styling */
-        border: 1px solid black;
-        max-width: 500px;
-
-        > * {
-            padding: 0.25rem;
-        }
-
-        summary:hover {
-            background-color: #EEE;
-        }
-        /* end visual styling */
-
 /* MARKER SECTION: This all effectively recreates the default triangle marker */
         summary {
             /* this removes the marker */
@@ -49,5 +36,17 @@
             }
         }
 /* END MARKER SECTION */
+        /* visual styling */
+        border: 1px solid black;
+        max-width: 500px;
+            
+        > * {
+            padding: 0.25rem;
+        }
+        
+        summary:hover {
+            background-color: #EEE;
+        }
+        /* end visual styling */
     }
 }

@@ -1,0 +1,55 @@
+#cso-accordion-group {
+    
+    .accordion-controller {
+        /* add visual marker */
+        &::before {
+            content: "" / "";
+            display: inline-block;
+            border: 6px solid transparent;
+            position: relative;
+            top: 3px;
+            width: 0;
+            height: 0;
+            border-top-color: black;
+        }
+
+        /* handle collapsed state*/
+        &[aria-expanded="false"] {
+
+            /* hide controlled content when collapsed */
+            + .accordion-content-section {
+                display: none;
+            }
+
+            /* rotate visual marker */
+            &::before {
+                border-color: transparent;
+                border-left-color:black;
+                top: 0;
+            }
+        }
+
+/* visual styling */
+        border: none;
+        background: white;
+        padding: 0.25rem;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+
+        &:hover {
+            background-color: #EEE;
+        }
+        
+    }
+
+    .accordion-section-wrapper {
+        max-width: 500px;
+        border: 1px solid black;
+
+        > * {
+            padding: 0.25rem;
+        }
+    }
+/* end visual styling */
+}
