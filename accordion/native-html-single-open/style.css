@@ -36,7 +36,7 @@
             }
         }
 /* END MARKER SECTION */
-        /* visual styling */
+/* visual styling */
         border: 1px solid black;
         max-width: 500px;
             
@@ -47,6 +47,6 @@
         summary:hover {
             background-color: #EEE;
         }
-        /* end visual styling */
+/* end visual styling */
     }
 }
