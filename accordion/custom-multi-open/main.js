@@ -1,11 +1,13 @@
 (() => {
-    // find all accordion groups
-    let accordionGroup = document.getElementById('cmo-accordion-group');
-    // find all accordion controllers in the example group
-    let accordionControllers = accordionGroup.querySelectorAll(".accordion-controller")
-    // add event listener to each controller
-    for (const controller of accordionControllers) {
-        controller.addEventListener('click', switchAccordion)
+    function main() {
+        // find all accordion groups
+        let accordionGroup = document.getElementById('cmo-accordion-group');
+        // find all accordion controllers in the example group
+        let accordionControllers = accordionGroup.querySelectorAll(".accordion-controller")
+        // add event listener to each controller
+        for (const controller of accordionControllers) {
+            controller.addEventListener('click', switchAccordion)
+        }
     }
 
     function switchAccordion(event) {
