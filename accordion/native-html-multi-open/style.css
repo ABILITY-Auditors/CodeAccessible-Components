@@ -1,5 +1,19 @@
 #mnh-accordion-group {
-    summary {
-        cursor: pointer;
+    details {
+        border: 1px solid black;
+        max-width: 500px;
+
+        > * {
+            padding: 0.25rem;
+        }
+
+        summary {
+            cursor: pointer;
+
+            &:hover {
+                background-color: #EEE;
+            }
+        }
     }
+
 }
