@@ -21,16 +21,21 @@
                 display: none;
             }
 
-            /* rotate visual marker */
+            /* rotate visual marker when collapsed */
             &::before {
                 border-color: transparent;
                 border-left-color:black;
                 top: 0;
             }
         }
-
+/* focus indicator */
+        &:focus {
+            filter: invert(1);
+        }
+/* end focus indicator */
 /* visual styling */
         border: none;
+        color: black;
         background: white;
         padding: 0.25rem;
         cursor: pointer;
@@ -38,7 +43,7 @@
         text-align: left;
 
         &:hover {
-            background-color: #EEE;
+            background-color: #DDD;
         }
         
     }

@@ -24,24 +24,34 @@
             top: 3px;
             width: 0;
             height: 0;
-            border-top-color: black;
+            border-left-color:black;
         }
 
         /* change marker based on state */
         &[open] {
             summary::before {
                 border-color: transparent;
-                border-left-color:black;
+                border-top-color: black;
                 top: 0;
             }
         }
 /* END MARKER SECTION */
+/* focus indicator */
+        summary:focus {
+            filter: invert(1);
+        }
+/* end focus indicator */
 /* visual styling */
         border: 1px solid black;
         max-width: 500px;
             
         > * {
             padding: 0.25rem;
+        }
+
+        summary {
+            color: black;
+            background: white;
         }
         
         summary:hover {
