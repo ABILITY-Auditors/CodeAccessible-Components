@@ -1,4 +1,6 @@
 (() => {
+    main();
+    
     function main() {
         // find all accordion groups
         let accordionGroup = document.getElementById('cmo-accordion-group');
