@@ -15,7 +15,7 @@
     function switchAccordion(event) {
         // the accordion controller that was activated
         let accordionController = event.currentTarget;
-        let accordionGroup = accordionController.closest('cso-accordion-group');
+        let accordionGroup = accordionController.closest('#cso-accordion-group');
         let wasOpen = accordionController.getAttribute('aria-expanded') === 'true';
         // all controllers
         let accordionControllers = accordionGroup.querySelectorAll(".accordion-controller");
