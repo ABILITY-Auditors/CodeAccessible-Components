@@ -1,0 +1,62 @@
+#snh-accordion-group {
+    details {
+/* MARKER SECTION: This all effectively recreates the default triangle marker */
+        summary {
+            /* this removes the marker */
+            list-style-type: none;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+        }
+
+        /* This removes the marker for webkit browsers */
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Adds the marker back, use ::after to place it after the summary text */
+        summary::before {
+            content: "" / "";
+            border: 6px solid transparent;
+            position: relative;
+            top: 3px;
+            width: 0;
+            height: 0;
+            border-left-color:black;
+        }
+
+        /* change marker based on state */
+        &[open] {
+            summary::before {
+                border-color: transparent;
+                border-top-color: black;
+                top: 0;
+            }
+        }
+/* END MARKER SECTION */
+/* focus indicator */
+        summary:focus {
+            filter: invert(1);
+        }
+/* end focus indicator */
+/* visual styling */
+        border: 1px solid black;
+        max-width: 500px;
+            
+        > * {
+            padding: 0.25rem;
+        }
+
+        summary {
+            color: black;
+            background: white;
+        }
+        
+        summary:hover {
+            background-color: #EEE;
+        }
+/* end visual styling */
+    }
+}

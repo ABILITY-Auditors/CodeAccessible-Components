@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+<!-- CODE ACCESSIBLE SNIPPET START -->
+    <div id="cmo-accordion-group">
+        <!-- The <div> element is given a ROLE of GROUP
+             GROUP roles must have an accessible name,
+             without one they are not exposed by AT.
+             
+             ARIA-LABELLEDBY gives the <div> element an accessible
+             name. It targets the <button> element that controls
+             the disclosure widget.
+             
+             We expose the GROUP role so that SR users will be notified
+             when they enter and exit the group.
+        -->
+        <div  
+            role="group" 
+            aria-labelledby="accordion-controller-1"
+            class="accordion-section-wrapper">
+            <!-- The <button> element is given ARIA-EXPANDED, this
+                 attribute exposes the expanded/collapsed state. 
+                 Screen readers will notify users when the ARIA-EXPANDED
+                 attribute of an element in focus is changed. Note that 
+                 ARIA-EXPANDED must be on the focused element - it cannot
+                 be on an ancestor or descendant element.  
+
+                 We use javascript to change the ARIA-EXPANDED attribute.
+                 We use CSS to show/hide the contents based on the ARIA-EXPANDED
+                 value.
+            -->
+            <button 
+                aria-expanded="false" 
+                id="accordion-controller-1"
+                class="accordion-controller">
+                Accordion Section One
+            </button>
+            <div class="accordion-content-section">
+                <h5>This is a plain text section</h5>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus ipsam totam expedita sit perferendis natus. Quidem doloremque at porro suscipit aut minus doloribus amet soluta. Sint magnam voluptatibus laboriosam dignissimos?
+                </p>
+            </div>
+        </div>
+
+        <div class="accordion-section-wrapper" role="group" aria-labelledby="accordion-controller-2">
+            <button aria-expanded="false" class="accordion-controller" id="accordion-controller-2">
+                Accordion Section Two
+            </button>
+            <div class="accordion-content-section">
+                <div class="imageAccordionSection">
+                    <h5>This is another plain text section</h5>
+                </div>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus ipsam totam expedita sit perferendis natus. Quidem doloremque at porro suscipit aut minus doloribus amet soluta. Sint magnam voluptatibus laboriosam dignissimos?
+                </p>
+            </div>
+        </div>
+
+        <div class="accordion-section-wrapper" role="group" aria-labelledby="accordion-controller-3">
+            <button aria-expanded="false" class="accordion-controller" id="accordion-controller-3">
+                Accordion Section Three
+            </button>
+            <div class="accordion-content-section">
+                <h5>This is a form section</h5>
+                <div class="formAccordionSection">
+                    <form>
+                        <div>
+                            <label for="search">Search:</label> <input type="text" name="search" id="search"
+                                placeholder="e.g. Apple Pie">
+                        </div>
+                        <div>
+                            <label for="email">Email: </label> <input type="text" name="email" id="email"
+                                placeholder="joe@example.com">
+                        </div>
+                        <div>
+                            <label for="submit"> <input type="submit" name="submit" id="submit"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-section-wrapper" role="group" aria-labelledby="accordion-controller-4">
+            <button aria-expanded="false" class="accordion-controller" id="accordion-controller-4">
+                Accordion Section Four
+            </button>
+            <div class="accordion-content-section">
+                <h5>This is a plain text section</h5>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus ipsam totam expedita sit perferendis natus. Quidem doloremque at porro suscipit aut minus doloribus amet soluta. Sint magnam voluptatibus laboriosam dignissimos?
+                </p>
+            </div>
+        </div>
+    </div>
+<!-- CODE ACCESSIBLE SNIPPET END -->
+</body>
+
+</html>

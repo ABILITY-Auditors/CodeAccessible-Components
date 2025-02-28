@@ -1,0 +1,27 @@
+#mnh-accordion-group {
+/* visual styling */
+    details {
+        border: 1px solid black;
+        max-width: 500px;
+
+        > * {
+            padding: 0.25rem;
+        }
+
+        summary {
+            cursor: pointer;
+            color: black;
+            background: white;
+
+            &:hover {
+                background-color: #EEE;
+            }
+        }
+/* end visual styling */
+/* focus indicator */
+        summary:focus {
+            filter: invert(1);
+        }
+/* end focus indicator */
+    }
+}

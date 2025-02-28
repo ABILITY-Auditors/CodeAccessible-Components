@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+<!-- CODE ACCESSIBLE SNIPPET START -->
+    <div id="mnh-accordion-group">
+<!-- ACCORDION 1 -->
+        <!-- The <details> element has an implicit ROLE of GROUP
+             GROUP roles must have an accessible name,
+             without one they are not exposed by AT. 
+             
+             Note: if the GROUP
+             obtains its accessible name from the first element inside
+             it, most SRs will omit anouncing the name of the group (as
+             it is already going to be announced) and simply announced "group"
+        -->
+        <details 
+            open 
+            aria-labelledby="native-accordion-controller-1"
+            class="accordion-section-wrapper" 
+        >
+            <!-- The <summary> element has an implicit ROLE of BUTTON 
+                 it also has an implicit ARIA-EXPANDED value. 
+                 
+                 When "open" is present on the <details element,
+                 the <summary> element has an implicit ARIA-EXPANDED
+                 value of TRUE
+                 
+                 When "open" is not present, the value is FALSE
+            -->
+            <summary id="native-accordion-controller-1">
+                Accordion Section One
+            </summary>
+            <!-- This content will be visible or hidden depending on the details "open"
+                 attribute. 
+            -->
+            <h5>This is a plain text section</h5>
+            <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat magnam consequuntur praesentium dolor facere quod cupiditate veritatis ipsam ab maxime placeat dolore repellat totam dolorem iste voluptate, sunt culpa?
+            </p>
+        </details>
+<!-- ACCORDION 2 -->
+        <details class="accordion-section-wrapper" aria-labelledby="native-accordion-controller-2">
+            <summary class="accordion-controller" id="native-accordion-controller-2">
+                Accordion Section Two
+            </summary>
+
+            <div class="imageAccordionSection">
+                <h5>This is another plain text section</h5>
+            </div>
+            <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat magnam consequuntur praesentium dolor facere quod cupiditate veritatis ipsam ab maxime placeat dolore repellat totam dolorem iste voluptate, sunt culpa?
+            </p>
+        </details>
+<!-- ACCORDION 3 -->
+        <details class="accordion-section-wrapper" aria-labelledby="native-accordion-controller-3">
+            <summary class="accordion-controller" id="native-accordion-controller-3">
+                Accordion Section Three
+            </summary>
+            <h5>This is a form section</h5>
+            <div class="formAccordionSection">
+                <form>
+                    <div>
+                        <label for="search">Search:</label> <input type="text" name="search" id="search"
+                            placeholder="e.g. Apple Pie">
+                    </div>
+                    <div>
+                        <label for="email">Email: </label> <input type="text" name="email" id="email"
+                            placeholder="joe@example.com">
+                    </div>
+                    <div>
+                        <label for="submit"> <input type="submit" name="submit" id="submit"></label>
+                    </div>
+                </form>
+            </div>
+        </details>
+<!-- ACCORDION 4 -->
+        <details class="accordion-section-wrapper" aria-labelledby="native-accordion-controller-4">
+            <summary class="accordion-controller" id="native-accordion-controller-4">
+                Accordion Section Four
+            </summary>
+            <h5>This is a plain text section</h5>
+            <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat magnam consequuntur praesentium dolor facere quod cupiditate veritatis ipsam ab maxime placeat dolore repellat totam dolorem iste voluptate, sunt culpa?
+            </p>
+        </details>
+    </div>
+<!-- CODE ACCESSIBLE SNIPPET END -->
+</body>
+
+</html>

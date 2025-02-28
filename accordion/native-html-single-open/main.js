@@ -1,0 +1,1 @@
+// no javascript needed, native html handles interactivity

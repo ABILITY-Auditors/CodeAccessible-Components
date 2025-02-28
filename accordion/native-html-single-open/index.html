@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+<!-- CODE ACCESSIBLE SNIPPET START -->
+    <div id="snh-accordion-group">
+<!-- ACCORDION 1 -->
+        <!-- The <details> element has an implicit ROLE of GROUP
+             GROUP roles must have an accessible name,
+             without one they are not exposed by AT. 
+             We expose the GROUP role so that SR users will be notified
+             when they enter and exit the group.
+             
+             Note: if the GROUP
+             obtains its accessible name from the first element inside
+             it, most SRs will omit anouncing the name of the group (as
+             it is already going to be announced) and simply announced "group"
+
+             When a <details> is opened all other <details> with the same NAME are
+             closed. In this example, all <details> have the same NAME, so only
+             one can be opened at a time.
+
+             Since <details> is native HTML, it works without any javascript or css.
+             We use CSS to reproduce the default triangle marker to show you how
+             you can change the marker if desired.
+        -->
+        <details 
+            open 
+            name="faq"
+            aria-labelledby="native-accordion-controller-1"
+        >
+            <!-- The <summary> element has an implicit ROLE of BUTTON 
+                 it also has an implicit ARIA-EXPANDED value. 
+                 
+                 When "open" is present on the <details element,
+                 the <summary> element has an implicit ARIA-EXPANDED
+                 value of TRUE
+                 
+                 When "open" is not present, the value is FALSE
+            -->
+            <summary id="native-accordion-controller-1">
+                Accordion Section One
+            </summary>
+            <!-- This content will be visible or hidden depending on the details "open"
+                 attribute. 
+            -->
+            <h5>This is a plain text section</h5>
+            <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam, repellat! Culpa est excepturi corporis quos eos, vitae minima natus ducimus perspiciatis dicta at aut nam, quasi magni. Optio, dolore sapiente.
+            </p>
+        </details>
+<!-- ACCORDION 2 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-2">
+            <summary id="native-accordion-controller-2">
+                Accordion Section Two
+            </summary>
+            <h5>This is another plain text section</h5>
+            <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam, repellat! Culpa est excepturi corporis quos eos, vitae minima natus ducimus perspiciatis dicta at aut nam, quasi magni. Optio, dolore sapiente.
+            </p>
+        </details>
+<!-- ACCORDION 3 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-3">
+            <summary id="native-accordion-controller-3">
+                Accordion Section Three
+            </summary>
+            <h5>This is a form section</h5>
+            <div class="formAccordionSection">
+                <form>
+                    <div>
+                        <label for="search">Search:</label> 
+                        <input type="text" name="search" id="search"
+                            placeholder="e.g. Apple Pie">
+                    </div>
+                    <div>
+                        <label for="email">Email: </label> 
+                        <input type="text" name="email" id="email"
+                            placeholder="joe@example.com">
+                    </div>
+                    <div>
+                        <input type="submit" name="submit" id="submit">
+                    </div>
+                </form>
+            </div>
+        </details>
+<!-- ACCORDION 4 -->
+        <details name="faq" aria-labelledby="native-accordion-controller-4">
+            <summary id="native-accordion-controller-4">
+                Accordion Section Four
+            </summary>
+                <h5>This is a plain text section</h5>
+                <p>
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam, repellat! Culpa est excepturi corporis quos eos, vitae minima natus ducimus perspiciatis dicta at aut nam, quasi magni. Optio, dolore sapiente.
+                </p>
+        </details>
+    </div>
+<!-- CODE ACCESSIBLE SNIPPET END -->
+</body>
+
+</html>
