@@ -17,7 +17,7 @@
         &[aria-expanded="false"] {
 
             /* hide controlled content when collapsed */
-            + .accordion-content-section {
+            + .accordion-content {
                 display: none;
             }
 
@@ -34,6 +34,7 @@
         }
 /* end focus indicator */
 /* visual styling */
+        display: block;
         border: none;
         color: black;
         background: white;
@@ -48,9 +49,10 @@
         
     }
 
-    .accordion-section-wrapper {
+    .accordion-section {
         max-width: 500px;
         border: 1px solid black;
+        background-color: white;
 
         > * {
             padding: 0.25rem;
