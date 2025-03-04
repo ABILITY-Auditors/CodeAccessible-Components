@@ -44,6 +44,7 @@
 /* visual styling */
         border: 1px solid black;
         max-width: 500px;
+        background-color: white;
             
         > * {
             padding: 0.25rem;
