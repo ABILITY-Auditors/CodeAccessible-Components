@@ -1,0 +1,65 @@
+#csp-button-group {
+    button {
+        /* Set the pressed button visual styling.
+         * 1.4.11 Non-text Content and 1.4.1 Use of Color are 
+         * relvant success criteria.
+         * Essentially, we need to make sure that the different
+         * states (pressed versus not pressed) are visually
+         * perceptible. This state is programmatically perceptible
+         * by adding the aria-pressed attribute as noted in the HTML.
+         */
+        &[aria-pressed="true"] {
+            color: white;
+            background-color: #333;
+            text-decoration: underline;
+        }
+
+        /* We override the default focus indicator by setting our
+         * own outline.
+         */
+         &:focus {
+            outline: 0.2rem solid black;
+            outline-offset: 0.15rem;
+        }
+
+        /* visual styling */
+        padding: 0.5rem 0.7rem;
+        cursor: pointer;
+        color: black;
+        background-color: buttonface;
+        border: 1px solid;
+        border-radius: 2px;
+
+        &:hover {
+            color: black;
+            background-color: white;
+        }
+    }
+
+    /* Flex with flex-wrap allows the button group to wrap 
+     * if the viewport is small. The 1.4.4 Text Resizing 
+     * 1.4.10 Reflow Success Criteria are relevant here.
+     *
+     * Gap provides spacing between each button. Without it the
+     * focus indicator may overlap with other buttons.
+     */
+    .inner-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+    }
+
+    /* Provides visual styling */
+    [role="group"] {
+        border: 1px solid #555;
+        padding: 0.5rem;
+        width: fit-content;
+    }
+
+    [role="group"] :is(h1, h2, h3, h4, h5, h6) {
+        background-color: white;
+        margin: 0;
+        margin-bottom: 1rem;
+        font-size: 1.4rem;
+    }
+}

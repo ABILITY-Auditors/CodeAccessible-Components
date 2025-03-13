@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="style.css">
+<script src="main.js" defer></script>
+
+
+<div id="csp-button-group">
+<!-- We give this <div> a role of "group". Typically, screen readers 
+     will let users know when they enter and leave a group, which helps 
+     users understand when controls are related.
+-->
+<!-- What do these attributes mean?
+     - role: provides an accessible role to the element. "group" sigifies 
+             a grouping related content or user controls.
+     - aria-labelledby: provides an accessible name for this element. In 
+             regards to elements with a "group" role, the accessible name 
+             will typically be read by AT when a user enters and leaves the 
+             group.
+     - data-btn-group: this is used to signify that this is a button group 
+             component, used in the javascript.
+     - aria-pressed: this is a state. When true the element is "pressed". 
+             Similar to a radio button's checked state.
+-->
+    <div role="group" 
+         aria-labelledby="group-legend-animal">
+        <h2 id="group-legend-animal">Animal</h2>
+        <div class="inner-group">
+            <button aria-pressed="false">Cat</button>
+            <button aria-pressed="false">Dog</button>
+            <button aria-pressed="false">Frog</button>
+            <button aria-pressed="false">Rat</button>
+            <button aria-pressed="false">Hamster</button>
+        </div>
+    </div>
+</div>
